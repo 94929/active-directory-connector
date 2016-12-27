@@ -49,6 +49,10 @@ public class ActiveDirectoryConnector {
     }
 
     public void close() {
-
+        try {
+            ctx.close();
+        } catch (NamingException e) {
+            e.printStackTrace();
+        }
     }
 }
