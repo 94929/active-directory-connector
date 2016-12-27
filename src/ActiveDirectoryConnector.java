@@ -40,7 +40,8 @@ public class ActiveDirectoryConnector {
 
         // Creating searcher which will be passed into ctx.search
         SearchControls searcher = new SearchControls();
-        searcher.setSearchScope(SearchControls.SUBTREE_SCOPE);
+        // searcher.setCountLimit(1);
+        // searcher.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
         try {
             // Searching data based on 'domain', 'filter' and searcher
