@@ -1,4 +1,8 @@
+import javax.naming.Context;
+import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
+import java.util.Hashtable;
 
 /**
  * Created by jsh3571 on 27/12/2016.
@@ -15,6 +19,25 @@ public class ActiveDirectoryConnector {
         this.baseDn = baseDn;
         this.filter = filter;
 
+        // Create env(i.e. properties) which will contain configuration of ctx
+        Hashtable<String, Object> env = new Hashtable<>();
 
+        // Connect to active directory using LDAP.
+        env.put(Context.INITIAL_CONTEXT_FACTORY,
+                "com.sun.jndi.ldap.LdapCtxFactory");
+        env.put(Context.PROVIDER_URL,
+                "ldap://"+host+":"+port);
+
+        // Authenticate as standard user using given username and password
+        env.put(Context.SECURITY_AUTHENTICATION, "simple");
+        env.put(Context.SECURITY_PRINCIPAL, username);
+        env.put(Context.SECURITY_CREDENTIALS, password);
+
+        try {
+            // Create context, ctx from given configuration object, env.
+            ctx = new InitialDirContext(env);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        }
     }
 }
