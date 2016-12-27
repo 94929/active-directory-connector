@@ -1,7 +1,8 @@
 import javax.naming.Context;
+import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.InitialDirContext;
+import javax.naming.directory.*;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -11,7 +12,7 @@ import java.util.Map;
  */
 
 public class ActiveDirectoryConnector {
-    Hashtable<String, Object> env;
+    private Hashtable<String, Object> env;
     private DirContext ctx;
     private String baseDn;
     private String filter;
@@ -34,7 +35,38 @@ public class ActiveDirectoryConnector {
     }
 
     public Map<String, Object> getUser(String input) {
+        // Creating resulting map which will be returned
         Map<String, Object> result = new HashMap<>();
+
+        // Creating searcher which will be passed into ctx.search
+        SearchControls searcher = new SearchControls();
+        searcher.setSearchScope(SearchControls.SUBTREE_SCOPE);
+
+        try {
+            // Searching data based on 'domain', 'filter' and searcher
+            NamingEnumeration searchResult =
+                    ctx.search(baseDn, filter+input, searcher);
+
+            // Depending on hasData, map will contain searchResult or not
+            boolean hasData = searchResult.hasMore();
+
+            // Parse searched data(i.e. result) into resulting map
+            while (searchResult.hasMore()) {
+                SearchResult each = (SearchResult) searchResult.nextElement();
+                NamingEnumeration attributes = each.getAttributes().getAll();
+                while (attributes.hasMore()) {
+                    Attribute attribute = (Attribute) attributes.nextElement();
+                    result.put(attribute.getID(), attribute.get());
+                }
+            }
+
+            if (!hasData)
+                result = Collections.EMPTY_MAP;
+
+        } catch (NamingException e) {
+            e.printStackTrace();
+        }
+
         return result;
     }
 
