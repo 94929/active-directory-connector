@@ -2,7 +2,9 @@ import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 
 /**
  * Created by jsh3571 on 27/12/2016.
@@ -26,7 +28,7 @@ public class ActiveDirectoryConnector {
         env.put(Context.INITIAL_CONTEXT_FACTORY,
                 "com.sun.jndi.ldap.LdapCtxFactory");
         env.put(Context.PROVIDER_URL,
-                "ldap://"+host+":"+port);
+                "ldap://" + host + ":" + port);
 
         // Authenticate as standard user using given username and password
         env.put(Context.SECURITY_AUTHENTICATION, "simple");
@@ -39,5 +41,14 @@ public class ActiveDirectoryConnector {
         } catch (NamingException e) {
             e.printStackTrace();
         }
+    }
+
+    public Map<String, Object> getUser(String input) {
+        Map<String, Object> result = new HashMap<>();
+        return result;
+    }
+
+    public void close() {
+
     }
 }

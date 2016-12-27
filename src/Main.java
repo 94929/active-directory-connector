@@ -15,7 +15,7 @@ public class Main {
                 new ActiveDirectoryConnector(
                         host, port, username, password, baseDn, filter);
 
-        // System.out.println(dao.getUser("test"));
-        // dao.close();
+        System.out.println(dao.getUser("test"));
+        dao.close();
     }
 }
