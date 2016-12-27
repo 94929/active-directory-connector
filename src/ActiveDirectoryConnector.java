@@ -38,15 +38,10 @@ public class ActiveDirectoryConnector {
         // Creating resulting map which will be returned
         Map<String, Object> result = new HashMap<>();
 
-        // Creating searcher which will be passed into ctx.search
-        SearchControls searcher = new SearchControls();
-        // searcher.setCountLimit(1);
-        // searcher.setSearchScope(SearchControls.SUBTREE_SCOPE);
-
         try {
             // Searching data based on 'domain', 'filter' and searcher
             NamingEnumeration searchResult =
-                    ctx.search(domain, filter+input, searcher);
+                    ctx.search(domain, filter+input, getControl());
 
             // Depending on hasData, map will contain searchResult or not
             boolean hasData = searchResult.hasMore();
@@ -107,5 +102,12 @@ public class ActiveDirectoryConnector {
         env.put(Context.SECURITY_AUTHENTICATION, "simple");
         env.put(Context.SECURITY_PRINCIPAL, username);
         env.put(Context.SECURITY_CREDENTIALS, password);
+    }
+
+    private SearchControls getControl() {
+        // String[] attrIDs = {"cn", "co", "company", "countryCode"};
+        SearchControls ctls = new SearchControls();
+        // ctls.setReturningAttributes(attrIDs);
+        return ctls;
     }
 }
