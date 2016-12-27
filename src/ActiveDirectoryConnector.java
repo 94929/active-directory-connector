@@ -14,13 +14,13 @@ import java.util.Map;
 public class ActiveDirectoryConnector {
     private Hashtable<String, Object> env;
     private DirContext ctx;
-    private String baseDn;
+    private String domain;
     private String filter;
 
     public ActiveDirectoryConnector(String host, String port,
                                     String username, String password,
-                                    String baseDn, String filter) {
-        this.baseDn = baseDn;
+                                    String domain, String filter) {
+        this.domain = domain;
         this.filter = filter;
 
         // Init env(i.e. properties) which will contain configuration of ctx
@@ -45,7 +45,7 @@ public class ActiveDirectoryConnector {
         try {
             // Searching data based on 'domain', 'filter' and searcher
             NamingEnumeration searchResult =
-                    ctx.search(baseDn, filter+input, searcher);
+                    ctx.search(domain, filter+input, searcher);
 
             // Depending on hasData, map will contain searchResult or not
             boolean hasData = searchResult.hasMore();
@@ -57,7 +57,8 @@ public class ActiveDirectoryConnector {
 
                 /* From each resulting element, get all attributes
                  * However, if you use getAttributes().get(String attrID)
-                 * then you can retrieve a specific attribute */
+                 * then you can retrieve a specific attribute
+                 */
                 NamingEnumeration attributes = each.getAttributes().getAll();
 
                 // As I have obtained all attributes, iterate through them
@@ -92,7 +93,7 @@ public class ActiveDirectoryConnector {
 
     private void initEnv(String host, String port,
                          String username, String password) {
-        // Create env(i.e. properties) which will contain configuration of ctx
+        // Init env(i.e. properties) which will contain configuration of ctx
         env = new Hashtable<>();
 
         // Connect to active directory using LDAP.
