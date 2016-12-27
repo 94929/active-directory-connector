@@ -52,14 +52,26 @@ public class ActiveDirectoryConnector {
 
             // Parse searched data(i.e. result) into resulting map
             while (searchResult.hasMore()) {
+                // Accessing each element of searchResult
                 SearchResult each = (SearchResult) searchResult.nextElement();
+
+                /* From each resulting element, get all attributes
+                 * However, if you use getAttributes().get(String attrID)
+                 * then you can retrieve a specific attribute */
                 NamingEnumeration attributes = each.getAttributes().getAll();
+
+                // As I have obtained all attributes, iterate through them
                 while (attributes.hasMore()) {
+
+                    // Retrieving each attribute from attributes
                     Attribute attribute = (Attribute) attributes.nextElement();
+
+                    // From the retrieved attribute, put key and value to result
                     result.put(attribute.getID(), attribute.get());
                 }
             }
 
+            // If searchResult was empty, the method should return an empty map
             if (!hasData)
                 result = Collections.EMPTY_MAP;
 
