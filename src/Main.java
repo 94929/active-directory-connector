@@ -4,6 +4,11 @@
 
 public class Main {
 
+    /* TODO::
+     * 1. Sort result list by key of each map
+     * 2. Use internal iterator in getUser method to encapsulate information
+     * 3. Maybe refactor the way to pass the parameters to dao constructor
+     */
     public static void main(String[] args) {
         String domain = "cn=users,dc=comtrue,dc=com";
         String filter = "st=";

@@ -101,7 +101,7 @@ public class ActiveDirectoryConnector<K, V> {
                 "ldap://" + host + ":" + port);
 
         // Authenticate as standard user using given username and password
-        env.put(Context.SECURITY_AUTHENTICATION, "simple");
+        // env.put(Context.SECURITY_AUTHENTICATION, "simple");
         env.put(Context.SECURITY_PRINCIPAL, username);
         env.put(Context.SECURITY_CREDENTIALS, password);
     }
@@ -114,7 +114,7 @@ public class ActiveDirectoryConnector<K, V> {
          * ('dummy' in this case) is not in the user's attrs then the resulting
          * map will not contain 'dummy' but all
          */
-        String[] attrIDs = {"cn", "co", "company", "countryCode", "dummy"};
+        String[] attrIDs = {"cn", "company", "dummy"};
         ctls.setReturningAttributes(attrIDs);
 
         // Setting search scope, check declaration to see other types of scope
