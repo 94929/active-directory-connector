@@ -12,7 +12,10 @@ public class Main {
                 new ActiveDirectoryConnector(
                         args[0], args[1], args[2], args[3], domain, filter);
 
+        // Use getUser method according to its 'absolute key' value
         System.out.println(dao.getUser("서울특별시"));
+
+        // Closing context, ctx after use
         dao.close();
     }
 }

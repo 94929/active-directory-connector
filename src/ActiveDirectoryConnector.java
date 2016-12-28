@@ -65,6 +65,8 @@ public class ActiveDirectoryConnector<K, V> {
                     // From the retrieved attribute, put key and value to result
                     result.put(attribute.getID(), attribute.get());
                 }
+
+                // Appending result map into the list
                 list.add(result);
             }
 
