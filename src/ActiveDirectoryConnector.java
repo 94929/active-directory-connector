@@ -105,9 +105,14 @@ public class ActiveDirectoryConnector {
     }
 
     private SearchControls getControl() {
-        String[] attrIDs = {"cn", "co", "company", "countryCode", "dummy"};
+        // Creating new search control that will handle search configuration
         SearchControls ctls = new SearchControls();
+
+        // Select attributes to be returned as result
+        String[] attrIDs = {"cn", "co", "company", "countryCode", "dummy"};
         ctls.setReturningAttributes(attrIDs);
+
+
         return ctls;
     }
 }
