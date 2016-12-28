@@ -34,9 +34,9 @@ public class ActiveDirectoryConnector {
         }
     }
 
-    public Map<String, Object> getUser(String input) {
+    public Map getUser(String input) {
         // Creating resulting map which will be returned
-        Map<String, Object> result = new HashMap<>();
+        Map result = new HashMap<>();
 
         try {
             // Searching data based on 'domain', 'filter' and searcher
@@ -105,9 +105,9 @@ public class ActiveDirectoryConnector {
     }
 
     private SearchControls getControl() {
-        // String[] attrIDs = {"cn", "co", "company", "countryCode"};
+        String[] attrIDs = {"cn", "co", "company", "countryCode", "dummy"};
         SearchControls ctls = new SearchControls();
-        // ctls.setReturningAttributes(attrIDs);
+        ctls.setReturningAttributes(attrIDs);
         return ctls;
     }
 }

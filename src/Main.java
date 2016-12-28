@@ -10,13 +10,13 @@ public class Main {
         String username = "admin";
         String password = "privacy!@34";
         String domain = "cn=users,dc=comtrue,dc=com";
-        String filter = "company=";
+        String filter = "st=";
 
         ActiveDirectoryConnector dao =
                 new ActiveDirectoryConnector(
                         host, port, username, password, domain, filter);
 
-        System.out.println(dao.getUser("컴트루테크놀로지"));
+        System.out.println(dao.getUser("서울특별시"));
         dao.close();
     }
 }
