@@ -2,16 +2,13 @@ import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.*;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by jsh3571 on 27/12/2016.
  */
 
-public class ActiveDirectoryConnector {
+public class ActiveDirectoryConnector<K, V> {
     private Hashtable<String, Object> env;
     private DirContext ctx;
     private String domain;
@@ -34,9 +31,8 @@ public class ActiveDirectoryConnector {
         }
     }
 
-    public Map getUser(String input) {
-        // Creating resulting map which will be returned
-        Map result = new HashMap<>();
+    public List<Map<K, V>> getUser(String input) {
+        List<Map<K, V>> list = new LinkedList<>();
 
         try {
             // Searching data based on 'domain', 'filter' and searcher
@@ -48,6 +44,9 @@ public class ActiveDirectoryConnector {
 
             // Parse searched data(i.e. result) into resulting map
             while (searchResult.hasMore()) {
+                // Creating resulting map which will be appended to the list
+                Map result = new HashMap<>();
+
                 // Accessing each element of searchResult
                 SearchResult each = (SearchResult) searchResult.nextElement();
 
@@ -66,17 +65,18 @@ public class ActiveDirectoryConnector {
                     // From the retrieved attribute, put key and value to result
                     result.put(attribute.getID(), attribute.get());
                 }
+                list.add(result);
             }
 
             // If searchResult was empty, the method should return an empty map
             if (!hasData)
-                result = Collections.EMPTY_MAP;
+                list = Collections.EMPTY_LIST;
 
         } catch (NamingException e) {
             e.printStackTrace();
         }
 
-        return result;
+        return list;
     }
 
     public void close() {
