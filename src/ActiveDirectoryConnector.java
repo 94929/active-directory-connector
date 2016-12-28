@@ -108,10 +108,15 @@ public class ActiveDirectoryConnector {
         // Creating new search control that will handle search configuration
         SearchControls ctls = new SearchControls();
 
-        // Select attributes to be returned as result
+        /* Select attributes to be returned as result, if any of specified attr
+         * ('dummy' in this case) is not in the user's attrs then the resulting
+         * map will not contain 'dummy' but all
+         */
         String[] attrIDs = {"cn", "co", "company", "countryCode", "dummy"};
         ctls.setReturningAttributes(attrIDs);
 
+        // Setting search scope, check declaration to see other types of scope
+        ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
         return ctls;
     }
