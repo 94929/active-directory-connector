@@ -37,7 +37,7 @@ public class ActiveDirectoryConnector<K, V> {
         try {
             // Searching data based on 'domain', 'filter' and searcher
             NamingEnumeration searchResult =
-                    ctx.search(domain, filter+input, getControl());
+                    ctx.search(domain, filter + input, getControl());
 
             // Depending on hasData, map will contain searchResult or not
             boolean hasData = searchResult.hasMore();

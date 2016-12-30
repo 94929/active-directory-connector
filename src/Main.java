@@ -1,3 +1,5 @@
+import java.lang.reflect.Array;
+import java.util.Arrays;
 
 /**
  * Created by jsh3571 on 27/12/2016.
@@ -14,6 +16,7 @@ public class Main {
         String domain = "cn=users,dc=comtrue,dc=com";
         String filter = "st=";
 
+        // Creating a dao for ad
         ActiveDirectoryConnector dao =
                 new ActiveDirectoryConnector(
                         args[0], args[1], args[2], args[3], domain, filter);
@@ -24,10 +27,13 @@ public class Main {
         // Closing context, ctx after use
         dao.close();
 
-        /* NOW CONNECTING TO DB AND REPLACE DATA */
-        DatabaseConnector dbConnector
-                = new DatabaseConnector(args[4], args[5], args[6]);
+        // NOW CONNECTING TO DB AND REPLACE DATA
+        String url = args[4];
+        String usr = args[5];
+        String pwd = args[6];
 
-        dbConnector.updateDescription("ABCD", 200);
+        DatabaseConnector dbConnector = new DatabaseConnector(url, usr, pwd);
+
+        dbConnector.updateInput(Arrays.asList("heell", "yyooyyo"));
     }
 }
