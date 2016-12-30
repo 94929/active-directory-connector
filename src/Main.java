@@ -1,3 +1,4 @@
+
 /**
  * Created by jsh3571 on 27/12/2016.
  */
@@ -22,5 +23,11 @@ public class Main {
 
         // Closing context, ctx after use
         dao.close();
+
+        /* NOW CONNECTING TO DB AND REPLACE DATA */
+        DatabaseConnector dbConnector
+                = new DatabaseConnector(args[4], args[5], args[6]);
+
+        dbConnector.updateDescription("ABCD", 200);
     }
 }
