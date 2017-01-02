@@ -1,4 +1,3 @@
-import java.lang.reflect.Array;
 import java.util.Arrays;
 
 /**
@@ -27,13 +26,17 @@ public class Main {
         // Closing context, ctx after use
         dao.close();
 
-        // NOW CONNECTING TO DB AND REPLACE DATA
+        // /////////////////////////////////////////////////////////////////////
         String url = args[4];
         String usr = args[5];
         String pwd = args[6];
 
-        DatabaseConnector dbConnector = new DatabaseConnector(url, usr, pwd);
+        // Table name
+        String table = "a_test";
 
-        dbConnector.updateInput(Arrays.asList("heell", "yyooyyo"));
+        DatabaseConnector dbConnector = new DatabaseConnector(url, usr, pwd);
+        dbConnector.setSql("UPDATE "+table+" SET cn = ? company = ? WHERE id = ?;");
+        dbConnector.setValues(Arrays.asList("comtrue test1", "comtrueTech"));
+        dbConnector.updateValue("200");
     }
 }
