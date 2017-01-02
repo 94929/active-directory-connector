@@ -12,7 +12,6 @@ public class DatabaseConnector {
     private String url, usr, pwd;
     private String sql;
     private String table;
-    private List<String> values;
 
     public DatabaseConnector(String url, String usr, String pwd) {
         this.url = url;
@@ -36,14 +35,6 @@ public class DatabaseConnector {
         this.table = table;
     }
 
-    public List<String> getValues() {
-        return values;
-    }
-
-    public void setValues(List<String> values) {
-        this.values = values;
-    }
-
     /* This method updates value of the table in the db given
      * Update table according to the key value(i.e. key) given
      */
@@ -51,20 +42,47 @@ public class DatabaseConnector {
         try (Connection connection = connect();
              PreparedStatement pstmt = connection.prepareStatement(sql)) {
 
-            initPstmt(pstmt, values);
+            // initPstmt(pstmt, values);
 
             // Set key value
-            pstmt.setString(values.size() + 1, key);
+            // pstmt.setString(values.size() + 1, key);
 
             // Use executeUpdate method to update set values
             pstmt.executeUpdate();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void insertValue() {
+    // Insert values as a row of the table given
+    public void insertRow(List<String> values) {
+        String sql = "INSERT INTO "+table+" VALUES ?;";
 
+        try (Connection connection = connect();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
+
+            // Build resulting string which will be replaced with '?'
+            StringBuilder sb = new StringBuilder("(");
+            for (int i = 0; i < values.size(); i++) {
+                sb.append('\'');
+                sb.append(values.get(i));
+                sb.append('\'');
+
+                if (i < values.size() - 1) {
+                    sb.append(',');
+                } else {
+                    sb.append(')');
+                }
+            }
+
+            /* Setting PrepardedStatement, pstmt by combining given sql and
+             * the resulting string which contains values of a row that will be
+             * inserted into the table
+             */
+            pstmt.setString(1, sb.toString());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private Connection connect() throws SQLException {
@@ -77,7 +95,6 @@ public class DatabaseConnector {
         return DriverManager.getConnection(url, usr, pwd);
     }
 
-    // Iterate through the input list and sets
     private void initPstmt(PreparedStatement pstmt, List<String> values)
             throws SQLException {
 
