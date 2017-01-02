@@ -11,7 +11,7 @@ import java.util.Map;
  */
 
 public class DatabaseConnector {
-    private String url, usr, pwd;
+    private final String url, usr, pwd;
     private String table;
 
     public DatabaseConnector(String url, String usr, String pwd) {
@@ -55,35 +55,26 @@ public class DatabaseConnector {
         for (int i = 0; i < entries.size(); i++) {
             Map<K, V> entry = entries.get(i);
             List<String> values = new ArrayList<>();
+
             for (V val : entry.values())
                 values.add((String) val);
+
             insertRow(values);
         }
     }
 
     /* Insert values as a row of the table given */
     public void insertRow(List<String> values) {
-        String sql = "INSERT INTO " + table + " VALUES (?);";
+        String insertRowSQL = "INSERT INTO " + table + "(cn, company) VALUES"
+                + "(?,?);";
 
         try (Connection connection = connect();
-             PreparedStatement pstmt = connection.prepareStatement(sql)) {
+             PreparedStatement pstmt =
+                     connection.prepareStatement(insertRowSQL)) {
 
-            // Build resulting string which will be replaced with '?'
-            StringBuilder sb = new StringBuilder("");
-            for (int i = 0; i < values.size(); i++) {
-                sb.append("'");
-                sb.append(values.get(i));
-                sb.append("'");
+            for (int i = 0; i < values.size(); i++)
+                pstmt.setString(i+1, values.get(i));
 
-                if (i < values.size() - 1)
-                    sb.append(",");
-            }
-
-            /* Setting PrepardedStatement, pstmt by combining given sql and
-             * the resulting string which contains values of a row that will be
-             * inserted into the table
-             */
-            pstmt.setString(1, sb.toString());
         } catch (SQLException e) {
             e.printStackTrace();
         }
