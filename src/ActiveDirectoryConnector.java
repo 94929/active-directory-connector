@@ -8,7 +8,7 @@ import java.util.*;
  * Created by jsh3571 on 27/12/2016.
  */
 
-public class ActiveDirectoryConnector<K, V> {
+public class ActiveDirectoryConnector {
     private Hashtable<String, Object> env;
     private DirContext ctx;
     private String domain;
@@ -31,7 +31,7 @@ public class ActiveDirectoryConnector<K, V> {
         }
     }
 
-    public List<Map<K, V>> getUser(String input) {
+    public <K, V> List<Map<K, V>> getUser(String input) {
         List<Map<K, V>> list = new LinkedList<>();
 
         try {
