@@ -1,4 +1,3 @@
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +34,7 @@ public class Main {
 
         DatabaseConnector dbConnector = new DatabaseConnector(url, usr, pwd);
         dbConnector.setTable("test");
-        // dbConnector.insertRow(Arrays.asList("Insert Row", "Testing"));
-        dbConnector.deleteRow("Hello");
+        System.out.println("Connected to " + dbConnector.getTable());
+        dbConnector.deleteRow("cn", "hello");
     }
 }

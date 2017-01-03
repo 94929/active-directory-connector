@@ -65,7 +65,7 @@ public class DatabaseConnector {
 
     /* Insert values as a row of the table given */
     public void insertRow(List<String> values) {
-        String insertRowSQL = "INSERT INTO test(cn, company) VALUES"
+        String insertRowSQL = "INSERT INTO " + table + " VALUES"
                 + "(?,?);";
 
         try (Connection connection = connect();
@@ -83,14 +83,16 @@ public class DatabaseConnector {
         }
     }
 
-    public void deleteRow(String key) {
-        String deleteRowSQL = "DELETE FROM " + table + " WHERE cn = ?;";
+    public void deleteRow(String key, String val) {
+        String deleteRowSQL =
+                "DELETE FROM " + table + " WHERE " + key + " = ?;";
+
         try (Connection connection = connect();
              PreparedStatement pstmt =
                      connection.prepareStatement(deleteRowSQL)) {
 
-            // Delete a row which contains the key
-            pstmt.setString(1, key);
+            // Delete a row which contains the value, val
+            pstmt.setString(1, val);
 
             // It's crucial to executeUpdate() after setting all values
             pstmt.executeUpdate();
@@ -99,6 +101,7 @@ public class DatabaseConnector {
         }
     }
 
+    // This method opens a connection to the Postgresql database
     private Connection connect() throws SQLException {
         try {
             Class.forName("org.postgresql.Driver");
