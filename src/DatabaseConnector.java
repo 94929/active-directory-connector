@@ -83,6 +83,22 @@ public class DatabaseConnector {
         }
     }
 
+    public void deleteRow(String key) {
+        String deleteRowSQL = "DELETE FROM " + table + " WHERE cn = ?;";
+        try (Connection connection = connect();
+             PreparedStatement pstmt =
+                     connection.prepareStatement(deleteRowSQL)) {
+
+            // Delete a row which contains the key
+            pstmt.setString(1, key);
+
+            // It's crucial to executeUpdate() after setting all values
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     private Connection connect() throws SQLException {
         try {
             Class.forName("org.postgresql.Driver");
