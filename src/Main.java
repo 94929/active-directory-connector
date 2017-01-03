@@ -33,8 +33,8 @@ public class Main {
         String pwd = args[6];
 
         DatabaseConnector dbConnector = new DatabaseConnector(url, usr, pwd);
-        dbConnector.setTable("test");
-        System.out.println("Connected to " + dbConnector.getTable());
-        dbConnector.deleteRow("cn", "hello");
+        dbConnector.setTable("client_list");
+
+        dbConnector.deleteRow("window_id", "system");
     }
 }

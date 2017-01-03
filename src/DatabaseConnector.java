@@ -14,10 +14,19 @@ public class DatabaseConnector {
     private final String url, usr, pwd;
     private String table;
 
+    private Connection connection;
+    private PreparedStatement pstmt;
+
     public DatabaseConnector(String url, String usr, String pwd) {
         this.url = url;
         this.usr = usr;
         this.pwd = pwd;
+
+        try {
+            connection = connect();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public String getTable() {
@@ -26,28 +35,6 @@ public class DatabaseConnector {
 
     public void setTable(String table) {
         this.table = table;
-    }
-
-    /* This method updates value of the table in the db given
-     * Update table according to the key value(i.e. key) given
-     */
-    public void updateRow(String key, List<String> values) {
-        String sql = "UPDATE " + table + " SET cn = ? company = ? WHERE id = ?;";
-        try (Connection connection = connect();
-             PreparedStatement pstmt = connection.prepareStatement(sql)) {
-
-            // Set cn and company
-            for (int i = 0; i < values.size(); i++)
-                pstmt.setString(i + 1, values.get(i));
-
-            // Set key value
-            pstmt.setString(values.size() + 1, key);
-
-            // Use executeUpdate method to update set values
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     public <K, V> void insertRows(List<Map<K, V>> entries) {
@@ -68,9 +55,8 @@ public class DatabaseConnector {
         String insertRowSQL = "INSERT INTO " + table + " VALUES"
                 + "(?,?);";
 
-        try (Connection connection = connect();
-             PreparedStatement pstmt =
-                     connection.prepareStatement(insertRowSQL)) {
+        try {
+            pstmt = connection.prepareStatement(insertRowSQL);
 
             // Iterate through the values and set them into insertRowSQL
             for (int i = 0; i < values.size(); i++)
@@ -83,13 +69,13 @@ public class DatabaseConnector {
         }
     }
 
+    /* Delete a row(or rows) from the current table by key and values */
     public void deleteRow(String key, String val) {
         String deleteRowSQL =
                 "DELETE FROM " + table + " WHERE " + key + " = ?;";
 
-        try (Connection connection = connect();
-             PreparedStatement pstmt =
-                     connection.prepareStatement(deleteRowSQL)) {
+        try {
+            pstmt = connection.prepareStatement(deleteRowSQL);
 
             // Delete a row which contains the value, val
             pstmt.setString(1, val);
@@ -101,7 +87,7 @@ public class DatabaseConnector {
         }
     }
 
-    // This method opens a connection to the Postgresql database
+    /* Opens a connection to the Postgresql database */
     private Connection connect() throws SQLException {
         try {
             Class.forName("org.postgresql.Driver");
