@@ -34,7 +34,6 @@ public class Main {
 
         DatabaseConnector dbConnector = new DatabaseConnector(url, usr, pwd);
         dbConnector.setTable("client_list");
-
-        dbConnector.deleteRow("window_id", "system");
+        dbConnector.deleteRow("window_id", "SYSTEM");
     }
 }

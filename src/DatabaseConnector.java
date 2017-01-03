@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * Created by jsh3571 on 30/12/2016.
@@ -13,24 +14,14 @@ import java.util.Map;
 public class DatabaseConnector {
     private final String url, usr, pwd;
     private String table;
-
-    private Connection connection;
-    private PreparedStatement pstmt;
+    private Properties props;
 
     public DatabaseConnector(String url, String usr, String pwd) {
         this.url = url;
         this.usr = usr;
         this.pwd = pwd;
 
-        try {
-            connection = connect();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public String getTable() {
-        return table;
+        props = new Properties();
     }
 
     public void setTable(String table) {
@@ -48,6 +39,8 @@ public class DatabaseConnector {
 
             insertRow(values);
         }
+
+        System.out.println("Row(s) inserted into '" + table + "' table...");
     }
 
     /* Insert values as a row of the table given */
@@ -55,8 +48,8 @@ public class DatabaseConnector {
         String insertRowSQL = "INSERT INTO " + table + " VALUES"
                 + "(?,?);";
 
-        try {
-            pstmt = connection.prepareStatement(insertRowSQL);
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(insertRowSQL)) {
 
             // Iterate through the values and set them into insertRowSQL
             for (int i = 0; i < values.size(); i++)
@@ -74,17 +67,20 @@ public class DatabaseConnector {
         String deleteRowSQL =
                 "DELETE FROM " + table + " WHERE " + key + " = ?;";
 
-        try {
-            pstmt = connection.prepareStatement(deleteRowSQL);
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(deleteRowSQL)) {
 
             // Delete a row which contains the value, val
             pstmt.setString(1, val);
 
             // It's crucial to executeUpdate() after setting all values
             pstmt.executeUpdate();
+            System.out.println(pstmt.toString());
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        System.out.println("Row(s) removed from '" + table + "' table...");
     }
 
     /* Opens a connection to the Postgresql database */
