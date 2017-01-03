@@ -35,6 +35,6 @@ public class Main {
 
         DatabaseConnector dbConnector = new DatabaseConnector(url, usr, pwd);
         dbConnector.setTable("test");
-        dbConnector.insertRow(Arrays.asList("Insert Row", "Test"));
+        dbConnector.insertRow(Arrays.asList("Insert Row", "Testing"));
     }
 }

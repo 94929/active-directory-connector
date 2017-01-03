@@ -65,16 +65,19 @@ public class DatabaseConnector {
 
     /* Insert values as a row of the table given */
     public void insertRow(List<String> values) {
-        String insertRowSQL = "INSERT INTO " + table + "(cn, company) VALUES"
+        String insertRowSQL = "INSERT INTO test(cn, company) VALUES"
                 + "(?,?);";
 
         try (Connection connection = connect();
              PreparedStatement pstmt =
                      connection.prepareStatement(insertRowSQL)) {
 
+            // Iterate through the values and set them into insertRowSQL
             for (int i = 0; i < values.size(); i++)
-                pstmt.setString(i+1, values.get(i));
+                pstmt.setString(i + 1, values.get(i));
 
+            // It's crucial to executeUpdate() after setting all values
+            pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
