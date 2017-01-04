@@ -50,11 +50,18 @@ public class DatabaseConnector {
 
     /* Insert values as a row of the table given */
     public void insertRow(List<String> values) {
+
+        /* When insert a new row, number of the inserting values should be equal
+         * to the number of columns of the table given
+         */
+        if (values.size() != columns.size())
+            throw new RuntimeException();
+
         String insertRowSQL =
                 "INSERT INTO " + table
                         + getColumns()
                         + "VALUES"
-                        + "(?,?,?)";
+                        + getPlaceHolders();
 
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(insertRowSQL)) {
@@ -69,8 +76,8 @@ public class DatabaseConnector {
             pstmt.executeUpdate();
 
             // Printing out the result sql
-            System.out.println("pstmt.executeUpdate() is done with sql of '" +
-                    pstmt.toString() + "'");
+            System.out.println("pstmt.executeUpdate() is done with sql of \"" +
+                    pstmt.toString() + "\"");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -156,7 +163,6 @@ public class DatabaseConnector {
         }
     }
 
-
     private String getColumns() {
         StringBuilder sb = new StringBuilder("(");
         for (int i = 0; i < columns.size(); i++) {
@@ -167,7 +173,19 @@ public class DatabaseConnector {
             else
                 sb.append(") ");
         }
+        return sb.toString();
+    }
 
+    // count required number of place holders, '?' and replace them
+    private String getPlaceHolders() {
+        StringBuilder sb = new StringBuilder("(");
+        for (int i = 0; i < columns.size(); i++) {
+            sb.append("?");
+            if (i < columns.size() - 1)
+                sb.append(",");
+            else
+                sb.append(")");
+        }
         return sb.toString();
     }
 }

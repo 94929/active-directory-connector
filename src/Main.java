@@ -36,9 +36,16 @@ public class Main {
         String pwd = args[6];
 
         DatabaseConnector dbConnector = new DatabaseConnector(url, usr, pwd);
+
+        // Setting the table name which we will insert the data into
         dbConnector.setTable("client_list");
+
+        // Setting the column names which we will insert the data into
         dbConnector.setColumns(Arrays.asList("name", "loginid", "loginpw"));
+
+        // Insert a row into the columns of the table given
         dbConnector.insertRow(Arrays.asList("이름", "로그인아이디", "로그인비밀번호"));
+
         // dbConnector.deleteRow("status", "0");
     }
 }
