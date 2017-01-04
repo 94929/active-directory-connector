@@ -25,7 +25,7 @@ public class Main {
         List<Map<String, String>> output = dao.getUser("st=", "서울특별시");
 
         // Printing out the result of ADC
-        System.out.println(output);
+        // System.out.println(output);
 
         // Closing context, ctx after use
         dao.close();
@@ -37,8 +37,8 @@ public class Main {
 
         DatabaseConnector dbConnector = new DatabaseConnector(url, usr, pwd);
         dbConnector.setTable("client_list");
-        //dbConnector.setColumns(Arrays.asList("", "", ""));
-        //dbConnector.insertRow(Arrays.asList("이름", "로그인아이디", "로그인비밀번호"));
-        //dbConnector.deleteRow("status", "1");
+        dbConnector.setColumns(Arrays.asList("name", "loginid", "loginpw"));
+        dbConnector.insertRow(Arrays.asList("이름", "로그인아이디", "로그인비밀번호"));
+        // dbConnector.deleteRow("status", "0");
     }
 }

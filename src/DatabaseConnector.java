@@ -52,7 +52,7 @@ public class DatabaseConnector {
     public void insertRow(List<String> values) {
         String insertRowSQL =
                 "INSERT INTO " + table
-                        + "(name, loginid, loginpw) "
+                        + getColumns()
                         + "VALUES"
                         + "(?,?,?)";
 
@@ -61,16 +61,16 @@ public class DatabaseConnector {
 
             // Iterate through the values and set them into insertRowSQL
             for (int i = 0; i < values.size(); i++) {
-                //setPstmt(pstmt, getColumnType(conn, ), values.get(i));
+                setPstmt(pstmt, getColumnType(conn, columns.get(i)),
+                        values.get(i), i + 1);
             }
-
-            // TESTING
-            setPstmt(pstmt, getColumnType(conn, "name"), values.get(0));
-            setPstmt(pstmt, getColumnType(conn, "loginid"), values.get(1));
-            setPstmt(pstmt, getColumnType(conn, "loginpw"), values.get(2));
 
             // It's crucial to executeUpdate() after setting all values
             pstmt.executeUpdate();
+
+            // Printing out the result sql
+            System.out.println("pstmt.executeUpdate() is done with sql of '" +
+                    pstmt.toString() + "'");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -145,5 +145,39 @@ public class DatabaseConnector {
             default:    // invalid type
                 throw new InvalidTypeException();
         }
+    }
+
+    private void setPstmt(PreparedStatement pstmt, int type,
+                          String value, int index)
+            throws SQLException, InvalidTypeException {
+
+        switch (type) {
+            case 4:     // integer
+                pstmt.setInt(index, Integer.parseInt(value));
+                break;
+            case 12:    // string
+                pstmt.setString(index, value);
+                break;
+            case 1111:  // boolean
+                pstmt.setBoolean(index, Boolean.parseBoolean(value));
+                break;
+            default:    // invalid type
+                throw new InvalidTypeException();
+        }
+    }
+
+
+    private String getColumns() {
+        StringBuilder sb = new StringBuilder("(");
+        for (int i = 0; i < columns.size(); i++) {
+            sb.append(columns.get(i));
+
+            if (i < columns.size() - 1)
+                sb.append(",");
+            else
+                sb.append(") ");
+        }
+
+        return sb.toString();
     }
 }
