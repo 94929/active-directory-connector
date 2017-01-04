@@ -1,3 +1,5 @@
+import com.sun.jdi.InvalidTypeException;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,13 +23,16 @@ public class DatabaseConnector {
         this.table = table;
     }
 
-    public <K, V extends Object> void insertRows(List<Map<K, V>> entries) {
+    public <K extends String, V extends Object> void insertRows(
+            List<Map<K, V>> entries) {
+
         // Iterate through the input, entries
         for (int i = 0; i < entries.size(); i++) {
             Map<K, V> entry = entries.get(i);
-            List<String> values = new ArrayList<>();
+            List<Object> values = new ArrayList<>();
 
-            for (V val : entry.values()) values.add((String) val);
+            for (V val : entry.values())
+                values.add(val);
 
             insertRow(values);
         }
@@ -36,7 +41,7 @@ public class DatabaseConnector {
     }
 
     /* Insert values as a row of the table given */
-    public void insertRow(List<String> values) {
+    public void insertRow(List<Object> values) {
         String insertRowSQL =
                 "INSERT INTO " + table
                         + "(name, loginid, loginpw) "
@@ -48,11 +53,11 @@ public class DatabaseConnector {
 
             // Iterate through the values and set them into insertRowSQL
             for (int i = 0; i < values.size(); i++)
-                pstmt.setString(i + 1, values.get(i));
+                //setPstmt(pstmt, getColumnType(), values.get(i));
 
             // It's crucial to executeUpdate() after setting all values
             pstmt.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -70,7 +75,7 @@ public class DatabaseConnector {
 
             // It's crucial to executeUpdate() after setting all values
             pstmt.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -112,7 +117,7 @@ public class DatabaseConnector {
      * used types only
      */
     private void setPstmt(PreparedStatement pstmt, int type, String value)
-            throws SQLException {
+            throws SQLException, InvalidTypeException {
         switch (type) {
             case 4: // integer
                 pstmt.setInt(1, Integer.parseInt(value));
@@ -123,6 +128,8 @@ public class DatabaseConnector {
             case 1111: // boolean
                 pstmt.setBoolean(1, Boolean.parseBoolean(value));
                 break;
+            default:
+                throw new InvalidTypeException();
         }
     }
 }
