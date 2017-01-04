@@ -117,16 +117,6 @@ public class DatabaseConnector {
         return rsmd.getColumnType(1);
     }
 
-    private String getColumnName(Connection conn, String column)
-            throws SQLException {
-        Statement stmt = conn.createStatement();
-        ResultSet rs =
-                stmt.executeQuery("SELECT " + column + " FROM " + table);
-        ResultSetMetaData rsmd = rs.getMetaData();
-
-        return rsmd.getColumnName(1);
-    }
-
     /* Set pstmt depending on the type specified, currently supports frequently
      * used types only
      */
