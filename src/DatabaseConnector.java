@@ -65,11 +65,8 @@ public class DatabaseConnector {
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(deleteRowSQL)) {
 
-            // Get column type
-            System.out.println(getColumnType(conn, column));
-
             // Delete a row which contains the column value
-            pstmt.setString(1, value);
+            setPstmt(pstmt, getColumnType(conn, column), value);
 
             // It's crucial to executeUpdate() after setting all values
             // pstmt.executeUpdate();
@@ -109,5 +106,33 @@ public class DatabaseConnector {
         ResultSetMetaData rsmd = rs.getMetaData();
 
         return rsmd.getColumnName(1);
+    }
+
+    private void setPstmt(PreparedStatement pstmt, int type, String value)
+            throws SQLException {
+        switch (type) {
+            case 0:
+                break;
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                pstmt.setInt(1, Integer.parseInt(value));
+                break;
+            case 5:
+                break;
+            case 6:
+                break;
+            case 7:
+                break;
+            case 8:
+                break;
+            case 12:
+                pstmt.setString(1, value);
+                break;
+        }
     }
 }
