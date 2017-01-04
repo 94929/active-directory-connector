@@ -2,6 +2,7 @@ import com.sun.jdi.InvalidTypeException;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -12,15 +13,22 @@ import java.util.Map;
 public class DatabaseConnector {
     private final String url, usr, pwd;
     private String table;
+    private List<String> columns;
 
     public DatabaseConnector(String url, String usr, String pwd) {
         this.url = url;
         this.usr = usr;
         this.pwd = pwd;
+
+        columns = new LinkedList<>();
     }
 
     public void setTable(String table) {
         this.table = table;
+    }
+
+    public void setColumns(List<String> columns) {
+        this.columns = columns;
     }
 
     public <K extends String, V extends Object> void insertRows(
@@ -29,10 +37,10 @@ public class DatabaseConnector {
         // Iterate through the input, entries
         for (int i = 0; i < entries.size(); i++) {
             Map<K, V> entry = entries.get(i);
-            List<Object> values = new ArrayList<>();
+            List<String> values = new ArrayList<>();
 
             for (V val : entry.values())
-                values.add(val);
+                values.add((String) val);
 
             insertRow(values);
         }
@@ -41,7 +49,7 @@ public class DatabaseConnector {
     }
 
     /* Insert values as a row of the table given */
-    public void insertRow(List<Object> values) {
+    public void insertRow(List<String> values) {
         String insertRowSQL =
                 "INSERT INTO " + table
                         + "(name, loginid, loginpw) "
@@ -52,8 +60,14 @@ public class DatabaseConnector {
              PreparedStatement pstmt = conn.prepareStatement(insertRowSQL)) {
 
             // Iterate through the values and set them into insertRowSQL
-            for (int i = 0; i < values.size(); i++)
-                //setPstmt(pstmt, getColumnType(), values.get(i));
+            for (int i = 0; i < values.size(); i++) {
+                //setPstmt(pstmt, getColumnType(conn, ), values.get(i));
+            }
+
+            // TESTING
+            setPstmt(pstmt, getColumnType(conn, "name"), values.get(0));
+            setPstmt(pstmt, getColumnType(conn, "loginid"), values.get(1));
+            setPstmt(pstmt, getColumnType(conn, "loginpw"), values.get(2));
 
             // It's crucial to executeUpdate() after setting all values
             pstmt.executeUpdate();
@@ -119,16 +133,16 @@ public class DatabaseConnector {
     private void setPstmt(PreparedStatement pstmt, int type, String value)
             throws SQLException, InvalidTypeException {
         switch (type) {
-            case 4: // integer
+            case 4:     // integer
                 pstmt.setInt(1, Integer.parseInt(value));
                 break;
-            case 12: // string
+            case 12:    // string
                 pstmt.setString(1, value);
                 break;
-            case 1111: // boolean
+            case 1111:  // boolean
                 pstmt.setBoolean(1, Boolean.parseBoolean(value));
                 break;
-            default:
+            default:    // invalid type
                 throw new InvalidTypeException();
         }
     }

@@ -12,13 +12,11 @@ public class ActiveDirectoryConnector {
     private Hashtable<String, Object> env;
     private DirContext ctx;
     private String domain;
-    private String filter;
 
     public ActiveDirectoryConnector(String host, String port,
                                     String username, String password,
-                                    String domain, String filter) {
+                                    String domain) {
         this.domain = domain;
-        this.filter = filter;
 
         // Init env(i.e. properties) which will contain configuration of ctx
         initEnv(host, port, username, password);
@@ -31,7 +29,8 @@ public class ActiveDirectoryConnector {
         }
     }
 
-    public <K, V> List<Map<K, V>> getUser(String input) {
+    /* Acquire user(s) who has the key input inserted into the method */
+    public <K, V> List<Map<K, V>> getUser(String filter, String input) {
         List<Map<K, V>> list = new LinkedList<>();
 
         try {
@@ -56,7 +55,7 @@ public class ActiveDirectoryConnector {
                  */
                 NamingEnumeration attributes = each.getAttributes().getAll();
 
-                // As I have obtained all attributes, iterate through them
+                // As I have obtained all attributes, iterate through themk
                 while (attributes.hasMore()) {
 
                     // Retrieving each attribute from attributes
@@ -115,7 +114,7 @@ public class ActiveDirectoryConnector {
          * map will not contain 'dummy' but all.
          * e.g. attrIDs = {"name", "company", "dummy"};
          */
-        String[] attrIDs = {"name", "company"};
+        String[] attrIDs = {"name", "company", "lastLogoff"};
         ctls.setReturningAttributes(attrIDs);
 
         // Setting search scope, check declaration to see other types of scope

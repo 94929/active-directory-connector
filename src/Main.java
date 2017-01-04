@@ -15,18 +15,17 @@ public class Main {
      */
     public static void main(String[] args) {
         String domain = "cn=users,dc=comtrue,dc=com";
-        String filter = "st=";
 
         // Creating a dao for ad
         ActiveDirectoryConnector dao =
                 new ActiveDirectoryConnector(
-                        args[0], args[1], args[2], args[3], domain, filter);
+                        args[0], args[1], args[2], args[3], domain);
 
         // Use getUser method according to its 'absolute key' value
-        List<Map<String, String>> output = dao.getUser("서울특별시");
+        List<Map<String, String>> output = dao.getUser("st=", "서울특별시");
 
         // Printing out the result of ADC
-        // System.out.println(output);
+        System.out.println(output);
 
         // Closing context, ctx after use
         dao.close();
@@ -38,7 +37,8 @@ public class Main {
 
         DatabaseConnector dbConnector = new DatabaseConnector(url, usr, pwd);
         dbConnector.setTable("client_list");
-        dbConnector.insertRow(Arrays.asList("이름", "로그인아이디", "로그인비밀번호"));
-        // dbConnector.deleteRow("status", "0");
+        //dbConnector.setColumns(Arrays.asList("", "", ""));
+        //dbConnector.insertRow(Arrays.asList("이름", "로그인아이디", "로그인비밀번호"));
+        //dbConnector.deleteRow("status", "1");
     }
 }
