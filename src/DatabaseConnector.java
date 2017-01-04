@@ -1,11 +1,7 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * Created by jsh3571 on 30/12/2016.
@@ -14,14 +10,11 @@ import java.util.Properties;
 public class DatabaseConnector {
     private final String url, usr, pwd;
     private String table;
-    private Properties props;
 
     public DatabaseConnector(String url, String usr, String pwd) {
         this.url = url;
         this.usr = usr;
         this.pwd = pwd;
-
-        props = new Properties();
     }
 
     public void setTable(String table) {
@@ -45,8 +38,10 @@ public class DatabaseConnector {
 
     /* Insert values as a row of the table given */
     public void insertRow(List<String> values) {
-        String insertRowSQL = "INSERT INTO " + table + " VALUES"
-                + "(?,?);";
+        String insertRowSQL =
+                "INSERT INTO " + table
+                        + "(name, loginid, loginpw) "
+                        + "VALUES(?,?,?);";
 
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(insertRowSQL)) {
@@ -62,20 +57,22 @@ public class DatabaseConnector {
         }
     }
 
-    /* Delete a row(or rows) from the current table by key and values */
-    public void deleteRow(String key, String val) {
+    /* Delete row(s) from the current table by column name and values */
+    public void deleteRow(String column, String value) {
         String deleteRowSQL =
-                "DELETE FROM " + table + " WHERE " + key + " = ?;";
+                "DELETE FROM " + table + " WHERE " + column + " = ?;";
 
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(deleteRowSQL)) {
 
-            // Delete a row which contains the value, val
-            pstmt.setString(1, val);
+            // Get column type
+            System.out.println(getColumnType(conn, column));
+
+            // Delete a row which contains the column value
+            pstmt.setString(1, value);
 
             // It's crucial to executeUpdate() after setting all values
-            pstmt.executeUpdate();
-            System.out.println(pstmt.toString());
+            // pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -92,5 +89,25 @@ public class DatabaseConnector {
         }
 
         return DriverManager.getConnection(url, usr, pwd);
+    }
+
+    private int getColumnType(Connection conn, String column)
+            throws SQLException {
+        Statement stmt = conn.createStatement();
+        ResultSet rs =
+                stmt.executeQuery("SELECT " + column + " FROM " + table);
+        ResultSetMetaData rsmd = rs.getMetaData();
+
+        return rsmd.getColumnType(1);
+    }
+
+    private String getColumnName(Connection conn, String column)
+            throws SQLException {
+        Statement stmt = conn.createStatement();
+        ResultSet rs =
+                stmt.executeQuery("SELECT " + column + " FROM " + table);
+        ResultSetMetaData rsmd = rs.getMetaData();
+
+        return rsmd.getColumnName(1);
     }
 }

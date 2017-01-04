@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,9 @@ public class Main {
         // Use getUser method according to its 'absolute key' value
         List<Map<String, String>> output = dao.getUser("서울특별시");
 
+        // Printing out the result of ADC
+        // System.out.println(output);
+
         // Closing context, ctx after use
         dao.close();
 
@@ -34,6 +38,7 @@ public class Main {
 
         DatabaseConnector dbConnector = new DatabaseConnector(url, usr, pwd);
         dbConnector.setTable("client_list");
-        dbConnector.deleteRow("window_id", "SYSTEM");
+        //dbConnector.insertRow(Arrays.asList("순서를", "바꾸서", "넣었다"));
+        dbConnector.deleteRow("status", "1");
     }
 }

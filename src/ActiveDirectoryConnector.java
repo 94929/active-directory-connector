@@ -112,9 +112,10 @@ public class ActiveDirectoryConnector {
 
         /* Select attributes to be returned as result, if any of specified attr
          * ('dummy' in this case) is not in the user's attrs then the resulting
-         * map will not contain 'dummy' but all
+         * map will not contain 'dummy' but all.
+         * e.g. attrIDs = {"name", "company", "dummy"};
          */
-        String[] attrIDs = {"cn", "company", "dummy"};
+        String[] attrIDs = {"name", "company"};
         ctls.setReturningAttributes(attrIDs);
 
         // Setting search scope, check declaration to see other types of scope
