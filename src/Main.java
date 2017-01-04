@@ -39,6 +39,6 @@ public class Main {
         DatabaseConnector dbConnector = new DatabaseConnector(url, usr, pwd);
         dbConnector.setTable("client_list");
         //dbConnector.insertRow(Arrays.asList("순서를", "바꾸서", "넣었다"));
-        dbConnector.deleteRow("status", "1");
+        dbConnector.deleteRow("status", "0");
     }
 }

@@ -21,14 +21,13 @@ public class DatabaseConnector {
         this.table = table;
     }
 
-    public <K, V> void insertRows(List<Map<K, V>> entries) {
+    public <K, V extends Object> void insertRows(List<Map<K, V>> entries) {
         // Iterate through the input, entries
         for (int i = 0; i < entries.size(); i++) {
             Map<K, V> entry = entries.get(i);
             List<String> values = new ArrayList<>();
 
-            for (V val : entry.values())
-                values.add((String) val);
+            for (V val : entry.values()) values.add((String) val);
 
             insertRow(values);
         }
@@ -41,7 +40,8 @@ public class DatabaseConnector {
         String insertRowSQL =
                 "INSERT INTO " + table
                         + "(name, loginid, loginpw) "
-                        + "VALUES(?,?,?);";
+                        + "VALUES"
+                        + "(?,?,?)";
 
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(insertRowSQL)) {
@@ -60,7 +60,7 @@ public class DatabaseConnector {
     /* Delete row(s) from the current table by column name and values */
     public void deleteRow(String column, String value) {
         String deleteRowSQL =
-                "DELETE FROM " + table + " WHERE " + column + " = ?;";
+                "DELETE FROM " + table + " WHERE " + column + "=?";
 
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(deleteRowSQL)) {
@@ -69,7 +69,7 @@ public class DatabaseConnector {
             setPstmt(pstmt, getColumnType(conn, column), value);
 
             // It's crucial to executeUpdate() after setting all values
-            // pstmt.executeUpdate();
+            pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -108,30 +108,20 @@ public class DatabaseConnector {
         return rsmd.getColumnName(1);
     }
 
+    /* Set pstmt depending on the type specified, currently supports frequently
+     * used types only
+     */
     private void setPstmt(PreparedStatement pstmt, int type, String value)
             throws SQLException {
         switch (type) {
-            case 0:
-                break;
-            case 1:
-                break;
-            case 2:
-                break;
-            case 3:
-                break;
-            case 4:
+            case 4: // integer
                 pstmt.setInt(1, Integer.parseInt(value));
                 break;
-            case 5:
-                break;
-            case 6:
-                break;
-            case 7:
-                break;
-            case 8:
-                break;
-            case 12:
+            case 12: // string
                 pstmt.setString(1, value);
+                break;
+            case 1111: // boolean
+                pstmt.setBoolean(1, Boolean.parseBoolean(value));
                 break;
         }
     }
