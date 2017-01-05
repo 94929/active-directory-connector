@@ -51,10 +51,10 @@ public class DatabaseConnector {
         // Iterate through the input, entries
         for (int i = 0; i < entries.size(); i++) {
             Map<String, V> entry = entries.get(i);
-            List<String> values = new ArrayList<>();
+            List<Object> values = new ArrayList<>();
 
             for (V val : entry.values())
-                values.add((String) val);
+                values.add(val);
 
             insertRow(values);
         }
@@ -63,7 +63,7 @@ public class DatabaseConnector {
     }
 
     /* Insert values as a row of the table given */
-    public void insertRow(List<String> values) {
+    public void insertRow(List<Object> values) {
 
         /* When insert a new row, number of the inserting values should be equal
          * to the number of columns of the table given
@@ -80,10 +80,9 @@ public class DatabaseConnector {
         try (PreparedStatement pstmt = conn.prepareStatement(insertRowSQL)) {
 
             // Iterate through the values and set them into insertRowSQL
-            for (int i = 0; i < values.size(); i++) {
-                setPstmt(pstmt, getColumnType(conn, columns.get(i)),
-                        values.get(i), i + 1);
-            }
+            for (int i = 0; i < values.size(); i++)
+                setPstmt(pstmt,
+                        getColumnType(columns.get(i)), values.get(i), i + 1);
 
             // It's crucial to executeUpdate() after setting all values
             pstmt.executeUpdate();
@@ -100,7 +99,7 @@ public class DatabaseConnector {
         try (PreparedStatement pstmt = conn.prepareStatement(deleteRowSQL)) {
 
             // Delete a row which contains the column value
-            setPstmt(pstmt, getColumnType(conn, column), value, 1);
+            setPstmt(pstmt, getColumnType(column), value, 1);
 
             // It's crucial to executeUpdate() after setting all values
             pstmt.executeUpdate();
@@ -122,8 +121,7 @@ public class DatabaseConnector {
         return DriverManager.getConnection(url, usr, pwd);
     }
 
-    private int getColumnType(Connection conn, String column)
-            throws SQLException {
+    private int getColumnType(String column) throws SQLException {
         Statement stmt = conn.createStatement();
         ResultSet rs =
                 stmt.executeQuery("SELECT " + column + " FROM " + table);
@@ -135,19 +133,20 @@ public class DatabaseConnector {
     /* Set pstmt depending on the type specified, currently supports frequently
      * used types only
      */
-    private void setPstmt(PreparedStatement pstmt, int type, String value,
+    private void setPstmt(PreparedStatement pstmt, int type, Object value,
                           int index)
             throws SQLException, InvalidTypeException {
 
         switch (type) {
             case 4:     // integer
-                pstmt.setInt(index, Integer.parseInt(value));
+                pstmt.setInt(index, (Integer) value);
+                System.out.println("18");
                 break;
             case 12:    // string
-                pstmt.setString(index, value);
+                pstmt.setString(index, (String) value);
                 break;
             case 1111:  // boolean
-                pstmt.setBoolean(index, Boolean.parseBoolean(value));
+                pstmt.setBoolean(index, (Boolean) value);
                 break;
             default:    // invalid type
                 throw new InvalidTypeException();

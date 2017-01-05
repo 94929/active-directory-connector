@@ -14,15 +14,20 @@ public class Main {
      * 3. Maybe refactor the way to pass the parameters to dao constructor
      */
     public static void main(String[] args) throws Exception {
+        String host = args[0];
+        String port = args[1];
+        String username = args[2];
+        String password = args[3];
+
         String domain = "cn=users,dc=comtrue,dc=com";
 
         // Creating a dao for ad
         ActiveDirectoryConnector dao =
                 new ActiveDirectoryConnector(
-                        args[0], args[1], args[2], args[3], domain);
+                        host, port, username, password, domain);
 
         // Use getUser method according to its 'absolute key' value
-        List<Map<String, String>> output =
+        List<Map<String, Object>> output =
                 dao.getUser("st=", "서울특별시");
 
         // Printing out the result of ADC
@@ -42,12 +47,13 @@ public class Main {
         dbc.setTable("client_list");
 
         // Setting the column names which we will insert the data into
-        dbc.setColumns(Arrays.asList(
-                "name", "loginid", "loginpw", "department"));
+        dbc.setColumns(Arrays.asList("name", "loginid", "loginpw"));
 
-        // Insert a row into the columns of the table given
-        // dbc.insertRow(Arrays.asList("이름", "로그인아이디", "로그인비밀번호"));
-        dbc.deleteRow("status", "0");
+        // Insert row(s) into the columns of the table given
+        // dbc.insertRows(output);
+
+        // delete row(s) from table
+        // dbc.deleteRow("name", "이름");
 
         // Closing dbc after use
         dbc.close();
