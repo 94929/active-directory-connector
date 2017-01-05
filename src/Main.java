@@ -19,12 +19,17 @@ public class Main {
         String username = args[2];
         String password = args[3];
 
-        String domain = "cn=users,dc=comtrue,dc=com";
-
         // Creating a dao for ad
         ActiveDirectoryConnector dao =
                 new ActiveDirectoryConnector(
-                        host, port, username, password, domain);
+                        host, port, username, password);
+
+        // Setting domain to be searched
+        dao.setDomain("cn=users,dc=comtrue,dc=com");
+
+        // Setting attrIDs
+        String[] attrIDs = {"name", "company", "lastLogoff"};
+        dao.setAttrs(attrIDs);
 
         // Use getUser method according to its 'absolute key' value
         List<Map<String, Object>> output =

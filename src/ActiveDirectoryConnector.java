@@ -12,11 +12,10 @@ public class ActiveDirectoryConnector {
     private Hashtable<String, Object> env;
     private DirContext ctx;
     private String domain;
+    private String[] attrIDs;
 
     public ActiveDirectoryConnector(String host, String port,
-                                    String username, String password,
-                                    String domain) {
-        this.domain = domain;
+                                    String username, String password) {
 
         // Init env(i.e. properties) which will contain configuration of ctx
         initEnv(host, port, username, password);
@@ -29,9 +28,17 @@ public class ActiveDirectoryConnector {
         }
     }
 
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
+
+    public void setAttrs(String[] attrIDs) {
+        this.attrIDs = attrIDs;
+    }
+
     /* Acquire user(s) who has the key input inserted into the method */
-    public <V> List<Map<String, V>> getUser(String filter, String input) {
-        List<Map<String, V>> list = new LinkedList<>();
+    public List<Map<String, Object>> getUser(String filter, String input) {
+        List<Map<String, Object>> list = new LinkedList<>();
 
         try {
             // Searching data based on 'domain', 'filter' and searcher
@@ -44,7 +51,7 @@ public class ActiveDirectoryConnector {
             // Parse searched data(i.e. result) into resulting map
             while (searchResult.hasMore()) {
                 // Creating resulting map which will be appended to the list
-                Map result = new HashMap<>();
+                Map<String, Object> result = new HashMap<>();
 
                 // Accessing each element of searchResult
                 SearchResult each = (SearchResult) searchResult.nextElement();
@@ -55,7 +62,7 @@ public class ActiveDirectoryConnector {
                  */
                 NamingEnumeration attributes = each.getAttributes().getAll();
 
-                // As I have obtained all attributes, iterate through themk
+                // As I have obtained all attributes, iterate through them
                 while (attributes.hasMore()) {
 
                     // Retrieving each attribute from attributes
@@ -114,7 +121,6 @@ public class ActiveDirectoryConnector {
          * map will not contain 'dummy' but all.
          * e.g. attrIDs = {"name", "company", "dummy"};
          */
-        String[] attrIDs = {"name", "company", "lastLogoff"};
         ctls.setReturningAttributes(attrIDs);
 
         // Setting search scope, check declaration to see other types of scope
