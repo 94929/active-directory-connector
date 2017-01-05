@@ -97,7 +97,6 @@ public class DatabaseConnector {
                 "DELETE FROM " + table + " WHERE " + column + "=?";
 
         try (PreparedStatement pstmt = conn.prepareStatement(deleteRowSQL)) {
-
             // Delete a row which contains the column value
             setPstmt(pstmt, getColumnType(column), value, 1);
 
@@ -140,7 +139,6 @@ public class DatabaseConnector {
         switch (type) {
             case 4:     // integer
                 pstmt.setInt(index, (Integer) value);
-                System.out.println("18");
                 break;
             case 12:    // string
                 pstmt.setString(index, (String) value);

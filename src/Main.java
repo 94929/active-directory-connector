@@ -24,6 +24,8 @@ public class Main {
                 new ActiveDirectoryConnector(
                         host, port, username, password);
 
+        // ActiveDirectoryConnector dao = new ActiveDirectoryConnector(host, port);
+
         // Setting domain to be searched
         dao.setDomain("cn=users,dc=comtrue,dc=com");
 
@@ -33,7 +35,7 @@ public class Main {
 
         // Use getUser method according to its 'absolute key' value
         List<Map<String, Object>> output =
-                dao.getUser("st=", "서울특별시");
+                dao.getUsers("st=", "서울특별시");
 
         // Printing out the result of ADC
         System.out.println(output);
@@ -46,21 +48,22 @@ public class Main {
         String usr = args[5];
         String pwd = args[6];
 
+        /*
         DatabaseConnector dbc = new DatabaseConnector(url, usr, pwd);
 
         // Setting the table name which we will insert the data into
         dbc.setTable("client_list");
 
         // Setting the column names which we will insert the data into
-        dbc.setColumns(Arrays.asList("name", "loginid", "loginpw"));
+        dbc.setColumns(Arrays.asList("loginpw", "name", "loginid"));
 
         // Insert row(s) into the columns of the table given
-        // dbc.insertRows(output);
+        dbc.insertRows(output);
 
         // delete row(s) from table
-        // dbc.deleteRow("name", "이름");
+        // dbc.deleteRow("loginid", "컴트루테크놀로지");
 
         // Closing dbc after use
-        dbc.close();
+        dbc.close();*/
     }
 }
