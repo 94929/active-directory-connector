@@ -30,8 +30,8 @@ public class ActiveDirectoryConnector {
     }
 
     /* Acquire user(s) who has the key input inserted into the method */
-    public <K, V> List<Map<K, V>> getUser(String filter, String input) {
-        List<Map<K, V>> list = new LinkedList<>();
+    public <V> List<Map<String, V>> getUser(String filter, String input) {
+        List<Map<String, V>> list = new LinkedList<>();
 
         try {
             // Searching data based on 'domain', 'filter' and searcher

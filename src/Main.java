@@ -13,7 +13,7 @@ public class Main {
      * 2. Use internal iterator in getUser method to encapsulate information
      * 3. Maybe refactor the way to pass the parameters to dao constructor
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         String domain = "cn=users,dc=comtrue,dc=com";
 
         // Creating a dao for ad
@@ -22,10 +22,11 @@ public class Main {
                         args[0], args[1], args[2], args[3], domain);
 
         // Use getUser method according to its 'absolute key' value
-        List<Map<String, String>> output = dao.getUser("st=", "서울특별시");
+        List<Map<String, String>> output =
+                dao.getUser("st=", "서울특별시");
 
         // Printing out the result of ADC
-        // System.out.println(output);
+        System.out.println(output);
 
         // Closing context, ctx after use
         dao.close();
@@ -35,17 +36,20 @@ public class Main {
         String usr = args[5];
         String pwd = args[6];
 
-        DatabaseConnector dbConnector = new DatabaseConnector(url, usr, pwd);
+        DatabaseConnector dbc = new DatabaseConnector(url, usr, pwd);
 
         // Setting the table name which we will insert the data into
-        dbConnector.setTable("client_list");
+        dbc.setTable("client_list");
 
         // Setting the column names which we will insert the data into
-        dbConnector.setColumns(Arrays.asList("name", "loginid", "loginpw"));
+        dbc.setColumns(Arrays.asList(
+                "name", "loginid", "loginpw", "department"));
 
         // Insert a row into the columns of the table given
-        dbConnector.insertRow(Arrays.asList("이름", "로그인아이디", "로그인비밀번호"));
+        // dbc.insertRow(Arrays.asList("이름", "로그인아이디", "로그인비밀번호"));
+        dbc.deleteRow("status", "0");
 
-        // dbConnector.deleteRow("status", "0");
+        // Closing dbc after use
+        dbc.close();
     }
 }

@@ -14,6 +14,7 @@ public class DatabaseConnector {
     private final String url, usr, pwd;
     private String table;
     private List<String> columns;
+    private Connection conn;
 
     public DatabaseConnector(String url, String usr, String pwd) {
         this.url = url;
@@ -21,6 +22,20 @@ public class DatabaseConnector {
         this.pwd = pwd;
 
         columns = new LinkedList<>();
+
+        try {
+            conn = connect();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void close() {
+        try {
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setTable(String table) {
@@ -31,12 +46,11 @@ public class DatabaseConnector {
         this.columns = columns;
     }
 
-    public <K extends String, V extends Object> void insertRows(
-            List<Map<K, V>> entries) {
+    public <V extends Object> void insertRows(List<Map<String, V>> entries) {
 
         // Iterate through the input, entries
         for (int i = 0; i < entries.size(); i++) {
-            Map<K, V> entry = entries.get(i);
+            Map<String, V> entry = entries.get(i);
             List<String> values = new ArrayList<>();
 
             for (V val : entry.values())
@@ -63,8 +77,7 @@ public class DatabaseConnector {
                         + "VALUES"
                         + getPlaceHolders();
 
-        try (Connection conn = connect();
-             PreparedStatement pstmt = conn.prepareStatement(insertRowSQL)) {
+        try (PreparedStatement pstmt = conn.prepareStatement(insertRowSQL)) {
 
             // Iterate through the values and set them into insertRowSQL
             for (int i = 0; i < values.size(); i++) {
@@ -74,10 +87,6 @@ public class DatabaseConnector {
 
             // It's crucial to executeUpdate() after setting all values
             pstmt.executeUpdate();
-
-            // Printing out the result sql
-            System.out.println("pstmt.executeUpdate() is done with sql of \"" +
-                    pstmt.toString() + "\"");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -88,11 +97,10 @@ public class DatabaseConnector {
         String deleteRowSQL =
                 "DELETE FROM " + table + " WHERE " + column + "=?";
 
-        try (Connection conn = connect();
-             PreparedStatement pstmt = conn.prepareStatement(deleteRowSQL)) {
+        try (PreparedStatement pstmt = conn.prepareStatement(deleteRowSQL)) {
 
             // Delete a row which contains the column value
-            setPstmt(pstmt, getColumnType(conn, column), value);
+            setPstmt(pstmt, getColumnType(conn, column), value, 1);
 
             // It's crucial to executeUpdate() after setting all values
             pstmt.executeUpdate();
@@ -127,25 +135,8 @@ public class DatabaseConnector {
     /* Set pstmt depending on the type specified, currently supports frequently
      * used types only
      */
-    private void setPstmt(PreparedStatement pstmt, int type, String value)
-            throws SQLException, InvalidTypeException {
-        switch (type) {
-            case 4:     // integer
-                pstmt.setInt(1, Integer.parseInt(value));
-                break;
-            case 12:    // string
-                pstmt.setString(1, value);
-                break;
-            case 1111:  // boolean
-                pstmt.setBoolean(1, Boolean.parseBoolean(value));
-                break;
-            default:    // invalid type
-                throw new InvalidTypeException();
-        }
-    }
-
-    private void setPstmt(PreparedStatement pstmt, int type,
-                          String value, int index)
+    private void setPstmt(PreparedStatement pstmt, int type, String value,
+                          int index)
             throws SQLException, InvalidTypeException {
 
         switch (type) {
