@@ -1,3 +1,5 @@
+package main;
+
 import com.sun.jdi.InvalidTypeException;
 
 import java.sql.*;
@@ -9,7 +11,6 @@ import java.util.Map;
 /**
  * Created by jsh3571 on 30/12/2016.
  */
-
 public class DatabaseConnector {
     private final String url, usr, pwd;
     private String table;

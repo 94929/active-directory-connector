@@ -1,3 +1,5 @@
+package main;
+
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -7,7 +9,6 @@ import java.util.*;
 /**
  * Created by jsh3571 on 27/12/2016.
  */
-
 public class ActiveDirectoryConnector {
     private Properties props;
     private DirContext ctx;
@@ -31,7 +32,7 @@ public class ActiveDirectoryConnector {
         initEnv(host, port, username, password);
 
         try {
-            // Create context, ctx from given configuration object, env
+            // Create context, ctx from given configuration object, props
             ctx = new InitialDirContext(props);
         } catch (NamingException e) {
             e.printStackTrace();
@@ -65,39 +66,30 @@ public class ActiveDirectoryConnector {
     }
 
     /**
-     * Get all users in the current active directory given.
-     *
-     * @return
-     */
-    public List<Map<String, Object>> getAllUsers() {
-        return new LinkedList<>();
-    }
-
-    /**
      * Get all users having input values(attribute) for the filter given
      *
      * @param filter is the key which we are searching for
-     * @param input is the value of the attribute for filter
+     * @param value  is the value of the attribute for filter
      * @return all users within a domain of the active directory given
      */
-    public List<Map<String, Object>> getUsers(String filter, String input) {
+    public List<Map<String, Object>> getUsers(String filter, String value) {
         List<Map<String, Object>> list = new LinkedList<>();
 
         try {
             // Searching data based on 'domain', 'filter' and searcher
-            NamingEnumeration searchResult =
-                    ctx.search(domain, filter + input, getControl());
+            NamingEnumeration searchResults =
+                    ctx.search(domain, filter + value, getControl());
 
             // Depending on hasData, map will contain searchResult or not
-            boolean hasData = searchResult.hasMore();
+            boolean hasData = searchResults.hasMore();
 
             // Parse searched data(i.e. result) into resulting map
-            while (searchResult.hasMore()) {
+            while (searchResults.hasMore()) {
                 // Creating resulting map which will be appended to the list
                 Map<String, Object> result = new HashMap<>();
 
                 // Accessing each element of searchResult
-                SearchResult each = (SearchResult) searchResult.nextElement();
+                SearchResult each = (SearchResult) searchResults.nextElement();
 
                 /* From each resulting element, get all attributes
                  * However, if you use getAttributes().get(String attrID)
@@ -132,6 +124,7 @@ public class ActiveDirectoryConnector {
 
     /**
      * Logging out from Active Directory by closing DirContext, ctx.
+     *
      * @return
      */
     public void close() {
@@ -170,6 +163,7 @@ public class ActiveDirectoryConnector {
         /* Select attributes to be returned as result, if any of specified attr
          * ('dummy' in this case) is not in the user's attrs then the resulting
          * map will not contain 'dummy' but all.
+         *
          * e.g. attrIDs = {"name", "company", "dummy"};
          */
         ctls.setReturningAttributes(attrIDs);

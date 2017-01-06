@@ -1,4 +1,5 @@
-import java.util.Arrays;
+import main.ActiveDirectoryConnector;
+
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +12,7 @@ public class Main {
     /* TODO::
      * 1. Sort result list by key of each map
      * 2. Use internal iterator in getUser method to encapsulate information
-     * 3. Maybe refactor the way to pass the parameters to dao constructor
+     * 3. Maybe logger is needed and saves log as file.
      */
     public static void main(String[] args) throws Exception {
         String host = args[0];
@@ -21,21 +22,23 @@ public class Main {
 
         // Creating a dao for ad
         ActiveDirectoryConnector dao =
-                new ActiveDirectoryConnector(
-                        host, port, username, password);
+                new ActiveDirectoryConnector(host, port, username, password);
 
-        // ActiveDirectoryConnector dao = new ActiveDirectoryConnector(host, port);
+        // main.ActiveDirectoryConnector dao = new main.ActiveDirectoryConnector(host, port);
 
         // Setting domain to be searched
         dao.setDomain("cn=users,dc=comtrue,dc=com");
 
         // Setting attrIDs
-        String[] attrIDs = {"name", "company", "lastLogoff"};
-        dao.setAttrs(attrIDs);
+        dao.setAttrs(new String[] {"name", "company", "lastLogoff"});
 
-        // Use getUser method according to its 'absolute key' value
+        /* Use getUser method according to its 'absolute key' value.
+         *
+         * If you want to find all users from AD, use "objectclass=user".
+         * If you want to find all groups from AD, use "objectclass=group".
+         */
         List<Map<String, Object>> output =
-                dao.getUsers("st=", "서울특별시");
+                dao.getUsers("objectclass=", "user");
 
         // Printing out the result of ADC
         System.out.println(output);
@@ -48,7 +51,7 @@ public class Main {
         String usr = args[5];
         String pwd = args[6];
 
-        DatabaseConnector dbc = new DatabaseConnector(url, usr, pwd);
+        main.DatabaseConnector dbc = new main.DatabaseConnector(url, usr, pwd);
 
         // Setting the table name which we will insert the data into
         dbc.setTable("client_list");
