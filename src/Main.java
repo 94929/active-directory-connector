@@ -42,13 +42,12 @@ public class Main {
 
         // Closing context, ctx after use
         dao.close();
-
+/*
         // Obtaining url, usr and pwd from program arguments section
         String url = args[4];
         String usr = args[5];
         String pwd = args[6];
 
-        /*
         DatabaseConnector dbc = new DatabaseConnector(url, usr, pwd);
 
         // Setting the table name which we will insert the data into
@@ -61,7 +60,7 @@ public class Main {
         dbc.insertRows(output);
 
         // delete row(s) from table
-        // dbc.deleteRow("loginid", "컴트루테크놀로지");
+        //dbc.deleteRow("loginid", "컴트루테크놀로지");
 
         // Closing dbc after use
         dbc.close();*/

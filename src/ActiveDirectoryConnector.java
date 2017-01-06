@@ -1,5 +1,4 @@
 import javax.naming.Context;
-import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.*;
@@ -10,7 +9,7 @@ import java.util.*;
  */
 
 public class ActiveDirectoryConnector {
-    private Hashtable<String, Object> env;
+    private Properties props;
     private DirContext ctx;
     private String domain;
     private String[] attrIDs;
@@ -25,12 +24,15 @@ public class ActiveDirectoryConnector {
      */
     public ActiveDirectoryConnector(String host, String port,
                                     String username, String password) {
+        // Init new Properties, props(i.e. env or conf)
+        props = new Properties();
+
         // Init env(i.e. properties) which will contain configuration of ctx
         initEnv(host, port, username, password);
 
         try {
             // Create context, ctx from given configuration object, env
-            ctx = new InitialDirContext(env);
+            ctx = new InitialDirContext(props);
         } catch (NamingException e) {
             e.printStackTrace();
         }
@@ -43,10 +45,12 @@ public class ActiveDirectoryConnector {
      * @param port
      */
     public ActiveDirectoryConnector(String host, String port) {
+        props = new Properties();
+
         initEnv(host, port);
 
         try {
-            ctx = new InitialDirContext(env);
+            ctx = new InitialDirContext(props);
         } catch (NamingException e) {
             e.printStackTrace();
         }
@@ -58,6 +62,15 @@ public class ActiveDirectoryConnector {
 
     public void setAttrs(String[] attrIDs) {
         this.attrIDs = attrIDs;
+    }
+
+    /**
+     * Get all users in the current active directory given.
+     *
+     * @return
+     */
+    public List<Map<String, Object>> getAllUsers() {
+        return new LinkedList<>();
     }
 
     /**
@@ -131,27 +144,23 @@ public class ActiveDirectoryConnector {
 
     private void initEnv(String host, String port,
                          String username, String password) {
-        // Init env(i.e. properties) which will contain configuration of ctx
-        env = new Hashtable<>();
 
         // Connect to active directory using LDAP.
-        env.put(Context.INITIAL_CONTEXT_FACTORY,
+        props.put(Context.INITIAL_CONTEXT_FACTORY,
                 "com.sun.jndi.ldap.LdapCtxFactory");
-        env.put(Context.PROVIDER_URL, "ldap://" + host + ":" + port);
+        props.put(Context.PROVIDER_URL, "ldap://" + host + ":" + port);
 
         // Authenticate as standard user using given username and password
-        env.put(Context.SECURITY_AUTHENTICATION, "simple");
-        env.put(Context.SECURITY_PRINCIPAL, username);
-        env.put(Context.SECURITY_CREDENTIALS, password);
+        props.put(Context.SECURITY_AUTHENTICATION, "simple");
+        props.put(Context.SECURITY_PRINCIPAL, username);
+        props.put(Context.SECURITY_CREDENTIALS, password);
     }
 
     private void initEnv(String host, String port) {
-        env = new Hashtable<>();
-
-        env.put(Context.INITIAL_CONTEXT_FACTORY,
+        props.put(Context.INITIAL_CONTEXT_FACTORY,
                 "com.sun.jndi.ldap.LdapCtxFactory");
-        env.put(Context.PROVIDER_URL, "ldap://" + host + ":" + port);
-        env.put(Context.SECURITY_AUTHENTICATION, "none");
+        props.put(Context.PROVIDER_URL, "ldap://" + host + ":" + port);
+        props.put(Context.SECURITY_AUTHENTICATION, "none");
     }
 
     private SearchControls getControl() {
