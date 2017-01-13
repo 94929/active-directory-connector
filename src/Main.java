@@ -1,5 +1,6 @@
 import main.ActiveDirectoryConnector;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ public class Main {
          * If you want to find all groups from AD, use "objectclass=group".
          */
         List<Map<String, Object>> output =
-                dao.getUsers("objectclass=", "user");
+                dao.getUsers("objectclass=", "group");
 
         // Printing out the result of ADC
         System.out.println(output);
@@ -60,10 +61,10 @@ public class Main {
         dbc.setColumns(Arrays.asList("loginpw", "name", "loginid"));
 
         // Insert row(s) into the columns of the table given
-        dbc.insertRows(output);
+        // dbc.insertRows(output);
 
         // delete row(s) from table
-        //dbc.deleteRow("loginid", "컴트루테크놀로지");
+        dbc.deleteRow("loginid", "컴트루테크놀로지");
 
         // Closing dbc after use
         dbc.close();*/
