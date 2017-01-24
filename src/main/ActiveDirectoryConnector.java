@@ -17,7 +17,6 @@ public class ActiveDirectoryConnector {
     private DirContext ctx;
     private String domain;
     private String[] attrIDs;
-    private List<Map<String, Object>> users;
 
     /**
      * Logging onto active directory server with username and password.
@@ -37,24 +36,6 @@ public class ActiveDirectoryConnector {
 
         try {
             // Create context, ctx from given configuration object, props
-            ctx = new InitialDirContext(props);
-        } catch (NamingException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Logging onto active directory server as anonymous.
-     *
-     * @param host
-     * @param port
-     */
-    public ActiveDirectoryConnector(String host, String port) {
-        props = new Properties();
-
-        initEnv(host, port);
-
-        try {
             ctx = new InitialDirContext(props);
         } catch (NamingException e) {
             e.printStackTrace();
@@ -197,13 +178,6 @@ public class ActiveDirectoryConnector {
         props.put(Context.SECURITY_AUTHENTICATION, "simple");
         props.put(Context.SECURITY_PRINCIPAL, username);
         props.put(Context.SECURITY_CREDENTIALS, password);
-    }
-
-    private void initEnv(String host, String port) {
-        props.put(Context.INITIAL_CONTEXT_FACTORY,
-                "com.sun.jndi.ldap.LdapCtxFactory");
-        props.put(Context.PROVIDER_URL, "ldap://" + host + ":" + port);
-        props.put(Context.SECURITY_AUTHENTICATION, "none");
     }
 
     private SearchControls getControl() {
