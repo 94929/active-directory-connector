@@ -22,16 +22,16 @@ public class Main {
         String password = args[3];
 
         // Creating a dao for ad
-        ActiveDirectoryConnector dao =
+        ActiveDirectoryConnector adc =
                 new ActiveDirectoryConnector(host, port, username, password);
 
         // main.ActiveDirectoryConnector dao = new main.ActiveDirectoryConnector(host, port);
 
         // Setting domain to be searched
-        dao.setDomain("cn=users,dc=comtrue,dc=com");
+        adc.setDomain("cn=users,dc=comtrue,dc=com");
 
         // Setting attrIDs
-        dao.setAttrs(new String[] {"name", "company", "lastLogoff"});
+        adc.setAttrs(new String[] {"name", "company"});
 
         /* Use getUser method according to its 'absolute key' value.
          *
@@ -39,14 +39,14 @@ public class Main {
          * If you want to find all groups from AD, use "objectclass=group".
          */
         List<Map<String, Object>> output =
-                dao.getUsers("objectclass=", "group");
+                adc.getUsers("st=", "서울특별시");
 
         // Printing out the result of ADC
         System.out.println(output);
 
         // Closing context, ctx after use
-        dao.close();
-/*
+        adc.close();
+
         // Obtaining url, usr and pwd from program arguments section
         String url = args[4];
         String usr = args[5];
@@ -64,9 +64,11 @@ public class Main {
         // dbc.insertRows(output);
 
         // delete row(s) from table
-        dbc.deleteRow("loginid", "컴트루테크놀로지");
+        // dbc.deleteRow("loginid", "yjlee_root");
+
+        // update the shit
 
         // Closing dbc after use
-        dbc.close();*/
+        dbc.close();
     }
 }

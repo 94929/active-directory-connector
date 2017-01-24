@@ -85,7 +85,7 @@ public class DatabaseConnector {
                 setPstmt(pstmt,
                         getColumnType(columns.get(i)), values.get(i), i + 1);
 
-            // It's crucial to executeUpdate() after setting all values
+            // It's crucial to executeUpdate() after setting all the values
             pstmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -147,7 +147,7 @@ public class DatabaseConnector {
             case 1111:  // boolean
                 pstmt.setBoolean(index, (Boolean) value);
                 break;
-            default:    // invalid type
+            default:    // otherwise, invalid type
                 throw new InvalidTypeException();
         }
     }

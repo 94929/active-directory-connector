@@ -4,6 +4,9 @@ import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.*;
 
 /**
@@ -14,6 +17,7 @@ public class ActiveDirectoryConnector {
     private DirContext ctx;
     private String domain;
     private String[] attrIDs;
+    private List<Map<String, Object>> users;
 
     /**
      * Logging onto active directory server with username and password.
@@ -119,7 +123,50 @@ public class ActiveDirectoryConnector {
             e.printStackTrace();
         }
 
+        // Save users data
+        saveUsers(list);
+
         return list;
+    }
+
+    /**
+     * sort users by name
+     */
+    private void sortUsers(List<Map<String, Object>> users) {
+
+    }
+
+    /**
+     * Save current users that is being hold in the data structure.
+     */
+    private void saveUsers(List<Map<String, Object>> users) {
+        File file = new File("data.txt");
+
+        try {
+            file.createNewFile();
+
+            // create your filewriter and bufferedreader
+            BufferedWriter out = new BufferedWriter(new FileWriter("data.txt"));
+
+            for (int i = 0; i < users.size(); i++) {
+                Iterator<Map.Entry<String, Object>> it
+                        = users.get(i).entrySet().iterator();
+
+                while (it.hasNext()) {
+                    Map.Entry<String, Object> entry = it.next();
+                    out.write(entry.getKey() + "=" + entry.getValue());
+
+                    if (it.hasNext())
+                        out.write(",");
+                }
+
+                out.write("\n");
+            }
+
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
