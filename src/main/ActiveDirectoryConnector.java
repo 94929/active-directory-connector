@@ -123,6 +123,9 @@ public class ActiveDirectoryConnector {
             e.printStackTrace();
         }
 
+        // Sort users data
+        sortUsers(list);
+
         // Save users data
         saveUsers(list);
 
@@ -130,7 +133,7 @@ public class ActiveDirectoryConnector {
     }
 
     /**
-     * sort users by name
+     * sort users by key
      */
     private void sortUsers(List<Map<String, Object>> users) {
 

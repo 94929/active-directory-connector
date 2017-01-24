@@ -66,7 +66,7 @@ public class Main {
         // delete row(s) from table
         // dbc.deleteRow("loginid", "yjlee_root");
 
-        // update the shit
+        // update the
 
         // Closing dbc after use
         dbc.close();
