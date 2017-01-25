@@ -1,6 +1,5 @@
 package main;
 
-import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.*;
@@ -29,17 +28,26 @@ public class ActiveDirectoryConnector {
         try {
             // Create context, ctx from given configuration object, props
             ctx = new InitialDirContext(env);
+
+            setDomain();
+            setAttrIDs();
         } catch (NamingException e) {
             e.printStackTrace();
         }
     }
 
-    public void setDomain(String domain) {
-        this.domain = domain;
+    /**
+     * Setting the domain to be searched.
+     */
+    private void setDomain() {
+        this.domain = env.getProperty("domain");
     }
 
-    public void setAttrs(String[] attrIDs) {
-        this.attrIDs = attrIDs;
+    /**
+     * Setting attrIDs.
+     */
+    private void setAttrIDs() {
+        this.attrIDs = env.getProperty("attrIDs").split(",");
     }
 
     /**
@@ -135,7 +143,7 @@ public class ActiveDirectoryConnector {
 
     private void saveEnv() {
         try {
-            env.store(new FileWriter("env.properties"), null);
+            env.store(new FileOutputStream("env.properties"), null);
         } catch (IOException e) {
             e.printStackTrace();
         }

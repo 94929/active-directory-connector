@@ -16,14 +16,8 @@ public class Main {
      * 3. Maybe logger is needed and saves log as file.
      */
     public static void main(String[] args) throws Exception {
-        // Creating a dao for ad
+        // Creating a dao for AD
         ActiveDirectoryConnector adc = new ActiveDirectoryConnector();
-
-        // Setting domain to be searched
-        adc.setDomain("cn=users,dc=comtrue,dc=com");
-
-        // Setting attrIDs
-        adc.setAttrs(new String[] {"name", "company"});
 
         /* Use getUser method according to its 'absolute key' value.
          *
