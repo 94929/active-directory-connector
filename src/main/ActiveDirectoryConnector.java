@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 public class ActiveDirectoryConnector {
     private Properties env;
     private DirContext ctx;
+    private String[] attrIDs;
 
     /**
      * Logging onto active directory server with username and password.
@@ -48,12 +49,16 @@ public class ActiveDirectoryConnector {
 
             // Getting the result into the list given from the searchResults.
             getData(searchResults, list);
+
+            // If the list is actually empty, it should return an empty one.
+            if (isEmpty(list))
+                list = Collections.EMPTY_LIST;
         } catch (NamingException e) {
             e.printStackTrace();
         }
 
         // Sorting the result before saving.
-        Collections.sort(list, comp);
+        sortUsers(list);
 
         // Saving data
         saveUsers(list);
@@ -75,9 +80,6 @@ public class ActiveDirectoryConnector {
     private void getData(NamingEnumeration searchResults,
                          List<Map<String, Object>> list)
             throws NamingException {
-
-        // Depending on hasData, map will contain searchResult or not
-        boolean hasData = searchResults.hasMore();
 
         // Parse searched data(i.e. result) into resulting map
         while (searchResults.hasMore()) {
@@ -106,10 +108,29 @@ public class ActiveDirectoryConnector {
             // Appending result map into the list
             list.add(result);
         }
+    }
 
-        // If searchResult was empty, the method should return an empty map
-        if (!hasData)
-            list = Collections.EMPTY_LIST;
+    /**
+     * Check if current users' list is actually empty.
+     */
+    private boolean isEmpty(List<Map<String, Object>> users) {
+        for (int i = 0; i < users.size(); i++) {
+            Map<String, Object> curr = users.get(i);
+            if (!curr.isEmpty())
+                return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Sort current users before save it into data file.
+     */
+    private void sortUsers(List<Map<String, Object>> users) {
+        String key = env.getProperty("key");
+
+        if (Arrays.asList(attrIDs).contains(key))
+            Collections.sort(users, comp);
     }
 
     /**
@@ -201,13 +222,16 @@ public class ActiveDirectoryConnector {
         // Creating a new search control that will handle search configuration.
         SearchControls ctls = new SearchControls();
 
+        // Setting attrIDs.
+        attrIDs = env.getProperty("attrIDs").split(",");
+
         /* Select attributes to be returned as result, if any of specified attr
          * ('dummy' in this case) is not in the user's attrs then the resulting
          * map will not contain 'dummy' but all.
          *
          * e.g. attrIDs = {"name", "company", "dummy"};
          */
-        ctls.setReturningAttributes(env.getProperty("attrIDs").split(","));
+        ctls.setReturningAttributes(attrIDs);
 
         // Setting search scope, check declaration to see other types of scope
         ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
