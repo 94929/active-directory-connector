@@ -88,6 +88,9 @@ public class ActiveDirectoryConnector {
         // Sorting the result before saving.
         Collections.sort(list, comp);
 
+        // Saving data
+
+
         return list;
     }
 
@@ -98,6 +101,39 @@ public class ActiveDirectoryConnector {
         try {
             ctx.close();
         } catch (NamingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Save current users that is being hold in the data structure.
+     */
+    private void saveUsers(List<Map<String, Object>> users) {
+        try {
+            if (new File("data").createNewFile()) {
+                System.out.println("Created new file of data");
+            }
+
+            // create your filewriter and bufferedreader
+            BufferedWriter out = new BufferedWriter(new FileWriter("data"));
+
+            for (int i = 0; i < users.size(); i++) {
+                Iterator<Map.Entry<String, Object>> it
+                        = users.get(i).entrySet().iterator();
+
+                while (it.hasNext()) {
+                    Map.Entry<String, Object> entry = it.next();
+                    out.write(entry.getKey() + "=" + entry.getValue());
+
+                    if (it.hasNext())
+                        out.write(",");
+                }
+
+                out.write("\n");
+            }
+
+            out.close();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

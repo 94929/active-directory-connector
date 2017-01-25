@@ -10,11 +10,10 @@ import java.util.Map;
 public class Main {
 
     /* TODO::
-     * 1. Sort result list by key of each map
-     * 2. Use internal iterator in getUser method to encapsulate information
-     * 3. Maybe logger is needed and saves log as file.
+     * 1. Use internal iterator in getUser method to encapsulate information.
+     * 2. Maybe logger is needed and saves log as file.
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         // Creating a dao for AD
         ActiveDirectoryConnector adc = new ActiveDirectoryConnector();
 
