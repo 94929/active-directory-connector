@@ -4,10 +4,7 @@ import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.*;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -21,22 +18,13 @@ public class ActiveDirectoryConnector {
 
     /**
      * Logging onto active directory server with username and password.
-     *
-     * @param host
-     * @param port
-     * @param username
-     * @param password
      */
-    public ActiveDirectoryConnector(String host, String port,
-                                    String username, String password) {
+    public ActiveDirectoryConnector() {
         // Create new Properties, props(i.e. env or conf)
         env = new Properties();
 
         // Init env(i.e. properties) which will contain configuration of ctx
-        initEnv(host, port, username, password);
-
-        // Save connection configuration, env.
-        saveEnv();
+        loadEnv();
 
         try {
             // Create context, ctx from given configuration object, props
@@ -112,7 +100,7 @@ public class ActiveDirectoryConnector {
         sortUsers(list);
 
         // Save users data
-        saveUsers(list);
+        // saveUsers(list);
 
         return list;
     }
@@ -122,39 +110,6 @@ public class ActiveDirectoryConnector {
      */
     private void sortUsers(List<Map<String, Object>> users) {
 
-    }
-
-    /**
-     * Save current users that is being hold in the data structure.
-     */
-    private void saveUsers(List<Map<String, Object>> users) {
-        File file = new File("data.txt");
-
-        try {
-            file.createNewFile();
-
-            // create your filewriter and bufferedreader
-            BufferedWriter out = new BufferedWriter(new FileWriter("data.txt"));
-
-            for (int i = 0; i < users.size(); i++) {
-                Iterator<Map.Entry<String, Object>> it
-                        = users.get(i).entrySet().iterator();
-
-                while (it.hasNext()) {
-                    Map.Entry<String, Object> entry = it.next();
-                    out.write(entry.getKey() + "=" + entry.getValue());
-
-                    if (it.hasNext())
-                        out.write(",");
-                }
-
-                out.write("\n");
-            }
-
-            out.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -170,18 +125,12 @@ public class ActiveDirectoryConnector {
         }
     }
 
-    private void initEnv(String host, String port,
-                         String username, String password) {
-
-        // Connect to active directory using LDAP.
-        env.put(Context.INITIAL_CONTEXT_FACTORY,
-                "com.sun.jndi.ldap.LdapCtxFactory");
-        env.put(Context.PROVIDER_URL, "ldap://" + host + ":" + port);
-
-        // Authenticate as standard user using given username and password
-        env.put(Context.SECURITY_AUTHENTICATION, "simple");
-        env.put(Context.SECURITY_PRINCIPAL, username);
-        env.put(Context.SECURITY_CREDENTIALS, password);
+    private void loadEnv() {
+        try {
+            env.load(new FileInputStream("env.properties"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void saveEnv() {

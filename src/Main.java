@@ -16,16 +16,8 @@ public class Main {
      * 3. Maybe logger is needed and saves log as file.
      */
     public static void main(String[] args) throws Exception {
-        String host = args[0];
-        String port = args[1];
-        String username = args[2];
-        String password = args[3];
-
         // Creating a dao for ad
-        ActiveDirectoryConnector adc =
-                new ActiveDirectoryConnector(host, port, username, password);
-
-        // main.ActiveDirectoryConnector dao = new main.ActiveDirectoryConnector(host, port);
+        ActiveDirectoryConnector adc = new ActiveDirectoryConnector();
 
         // Setting domain to be searched
         adc.setDomain("cn=users,dc=comtrue,dc=com");
@@ -48,9 +40,9 @@ public class Main {
         adc.close();
 
         // Obtaining url, usr and pwd from program arguments section
-        String url = args[4];
-        String usr = args[5];
-        String pwd = args[6];
+        String url = args[0];
+        String usr = args[1];
+        String pwd = args[2];
 
         main.DatabaseConnector dbc = new main.DatabaseConnector(url, usr, pwd);
 
@@ -65,8 +57,6 @@ public class Main {
 
         // delete row(s) from table
         // dbc.deleteRow("loginid", "yjlee_root");
-
-        // update the
 
         // Closing dbc after use
         dbc.close();
