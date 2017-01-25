@@ -16,6 +16,9 @@ public class ActiveDirectoryConnector {
     private DirContext ctx;
     private String[] attrIDs;
 
+    private final static Logger LOGGER =
+            Logger.getLogger(ActiveDirectoryConnector.class.getName());
+
     /**
      * Logging onto active directory server with username and password.
      */
@@ -39,8 +42,8 @@ public class ActiveDirectoryConnector {
      *
      * @return all users within a domain of the active directory given
      */
-    public List<Map<String, Object>> getUsers() {
-        List<Map<String, Object>> list = new LinkedList<>();
+    public void getUsers() {
+        List<Map<String, Object>> users = new LinkedList<>();
 
         try {
             // Searching data based on 'domain', 'filter' and searcher
@@ -48,22 +51,20 @@ public class ActiveDirectoryConnector {
                     ctx.search(getDomain(), getFilter(), getControl());
 
             // Getting the result into the list given from the searchResults.
-            getData(searchResults, list);
+            getData(searchResults, users);
 
             // If the list is actually empty, it should return an empty one.
-            if (isEmpty(list))
-                list = Collections.EMPTY_LIST;
+            if (isEmpty(users))
+                users = Collections.EMPTY_LIST;
         } catch (NamingException e) {
             e.printStackTrace();
         }
 
         // Sorting the result before saving.
-        sortUsers(list);
+        sortUsers(users);
 
         // Saving data
-        saveUsers(list);
-
-        return list;
+        saveUsers(users);
     }
 
     /**

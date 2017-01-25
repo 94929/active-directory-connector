@@ -21,10 +21,7 @@ public class Main {
          * If you want to find all users from AD, use "objectclass=user".
          * If you want to find all groups from AD, use "objectclass=group".
          */
-        List<Map<String, Object>> output = adc.getUsers();
-
-        // Printing out the result of ADC
-        System.out.println(output);
+        adc.getUsers();
 
         // Closing context, ctx after use
         adc.close();
