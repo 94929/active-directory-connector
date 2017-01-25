@@ -1,17 +1,11 @@
 import main.ActiveDirectoryConnector;
 
-import java.util.List;
-import java.util.Map;
-
 /**
  * Created by jsh3571 on 27/12/2016.
  */
 
 public class Main {
 
-    /* TODO::
-     * 1. Logger is needed and saves log as file.
-     */
     public static void main(String[] args) {
         // Creating a dao for AD
         ActiveDirectoryConnector adc = new ActiveDirectoryConnector();
@@ -44,7 +38,7 @@ public class Main {
         // dbc.insertRows(output);
 
         // delete row(s) from table
-        // dbc.deleteRow("loginid", "yjlee_root");
+        // dbc.deleteRow("loginid", "fake_id");
 
         // Closing dbc after use
         dbc.close();*/

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="ActiveDirectoryConnector:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ActiveDirectoryConnector_jar</output-path>
+    <root id="archive" name="ActiveDirectoryConnector.jar">
+      <element id="module-output" name="ActiveDirectoryConnector" />
+    </root>
+  </artifact>
+</component>

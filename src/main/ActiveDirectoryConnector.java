@@ -1,7 +1,5 @@
 package main;
 
-import sun.util.logging.PlatformLogger;
-
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.*;
@@ -31,15 +29,11 @@ public class ActiveDirectoryConnector {
 
         try {
             // Init env(i.e. properties) which will contain configuration of ctx
-            loadProps(env, "ev.properties");
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, e.toString(), e);
-        }
+            loadProps(env, "env.properties");
 
-        try {
             // Create context, ctx from given configuration object, props
             ctx = new InitialDirContext(env);
-        } catch (NamingException e) {
+        } catch (IOException | NamingException e) {
             LOGGER.log(Level.SEVERE, e.toString(), e);
         }
     }
@@ -69,9 +63,7 @@ public class ActiveDirectoryConnector {
 
             // Saving data
             saveUsers(users);
-        } catch (NamingException e) {
-            LOGGER.log(Level.SEVERE, e.toString(), e);
-        } catch (IOException e) {
+        } catch (NamingException | IOException e) {
             LOGGER.log(Level.SEVERE, e.toString(), e);
         }
     }
@@ -87,6 +79,9 @@ public class ActiveDirectoryConnector {
         }
     }
 
+    /**
+     * Getting the result into the list given from the searchResults.
+     */
     private void getData(NamingEnumeration searchResults,
                          List<Map<String, Object>> list)
             throws NamingException {
@@ -147,15 +142,12 @@ public class ActiveDirectoryConnector {
      * Save current users that is being hold in the data structure.
      */
     private void saveUsers(List<Map<String, Object>> users) throws IOException {
-        if (new File("data").createNewFile())
-            System.out.println("Created new file of data.");
-        else
-            System.out.println("File already exists.");
+        String fileName = env.getProperty("filename");
 
         Writer out =
                 new BufferedWriter(
                         new OutputStreamWriter(
-                                new FileOutputStream("data"),
+                                new FileOutputStream(fileName),
                                 Charset.forName("UTF-8")));
 
         for (int i = 0; i < users.size(); i++) {
@@ -240,7 +232,7 @@ public class ActiveDirectoryConnector {
     }
 
     /**
-     * Defined own comparator to sort the user list.
+     * Define own comparator to sort the user list, users.
      */
     private Comparator<Map<String, Object>> comp =
             new Comparator<Map<String, Object>>() {
