@@ -89,7 +89,7 @@ public class ActiveDirectoryConnector {
         Collections.sort(list, comp);
 
         // Saving data
-
+        saveUsers(list);
 
         return list;
     }
@@ -110,12 +110,17 @@ public class ActiveDirectoryConnector {
      */
     private void saveUsers(List<Map<String, Object>> users) {
         try {
-            if (new File("data").createNewFile()) {
-                System.out.println("Created new file of data");
-            }
+            if (new File("data").createNewFile())
+                System.out.println("Created new file of data.");
+            else
+                System.out.println("File already exists.");
 
             // create your filewriter and bufferedreader
-            BufferedWriter out = new BufferedWriter(new FileWriter("data"));
+            Writer out =
+                    new BufferedWriter(
+                            new OutputStreamWriter(
+                                    new FileOutputStream("data"),
+                                    Charset.forName("UTF-8")));
 
             for (int i = 0; i < users.size(); i++) {
                 Iterator<Map.Entry<String, Object>> it
@@ -210,12 +215,12 @@ public class ActiveDirectoryConnector {
     private Comparator<Map<String, Object>> comp =
             new Comparator<Map<String, Object>>() {
 
-        public int compare(Map<String, Object> m1, Map<String, Object> m2) {
-            String key = env.getProperty("key");
-            String firstKey = (String) m1.get(key);
-            String secondKey = (String) m2.get(key);
+                public int compare(Map<String, Object> m1, Map<String, Object> m2) {
+                    String key = env.getProperty("key");
+                    String firstKey = (String) m1.get(key);
+                    String secondKey = (String) m2.get(key);
 
-            return firstKey.compareTo(secondKey);
-        }
-    };
+                    return firstKey.compareTo(secondKey);
+                }
+            };
 }
