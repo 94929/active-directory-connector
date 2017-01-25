@@ -46,41 +46,8 @@ public class ActiveDirectoryConnector {
             NamingEnumeration searchResults =
                     ctx.search(getDomain(), getFilter(), getControl());
 
-            // Depending on hasData, map will contain searchResult or not
-            boolean hasData = searchResults.hasMore();
-
-            // Parse searched data(i.e. result) into resulting map
-            while (searchResults.hasMore()) {
-                // Creating resulting map which will be appended to the list
-                Map<String, Object> result = new HashMap<>();
-
-                // Accessing each element of searchResult
-                SearchResult each = (SearchResult) searchResults.nextElement();
-
-                /* From each resulting element, get all attributes
-                 * However, if you use getAttributes().get(String attrID)
-                 * then you can retrieve a specific attribute
-                 */
-                NamingEnumeration attributes = each.getAttributes().getAll();
-
-                // As I have obtained all attributes, iterate through them
-                while (attributes.hasMore()) {
-
-                    // Retrieving each attribute from attributes
-                    Attribute attribute = (Attribute) attributes.nextElement();
-
-                    // From the retrieved attribute, put key and value to result
-                    result.put(attribute.getID(), attribute.get());
-                }
-
-                // Appending result map into the list
-                list.add(result);
-            }
-
-            // If searchResult was empty, the method should return an empty map
-            if (!hasData)
-                list = Collections.EMPTY_LIST;
-
+            // Getting the result into the list given from the searchResults.
+            getData(searchResults, list);
         } catch (NamingException e) {
             e.printStackTrace();
         }
@@ -105,6 +72,46 @@ public class ActiveDirectoryConnector {
         }
     }
 
+    private void getData(NamingEnumeration searchResults,
+                         List<Map<String, Object>> list)
+            throws NamingException {
+
+        // Depending on hasData, map will contain searchResult or not
+        boolean hasData = searchResults.hasMore();
+
+        // Parse searched data(i.e. result) into resulting map
+        while (searchResults.hasMore()) {
+            // Creating resulting map which will be appended to the list
+            Map<String, Object> result = new HashMap<>();
+
+            // Accessing each element of searchResult
+            SearchResult each = (SearchResult) searchResults.nextElement();
+
+            /* From each resulting element, get all attributes
+             * However, if you use getAttributes().get(String attrID)
+             * then you can retrieve a specific attribute
+             */
+            NamingEnumeration attributes = each.getAttributes().getAll();
+
+            // As I have obtained all attributes, iterate through them
+            while (attributes.hasMore()) {
+
+                // Retrieving each attribute from attributes
+                Attribute attribute = (Attribute) attributes.nextElement();
+
+                // From the retrieved attribute, put key and value to result
+                result.put(attribute.getID(), attribute.get());
+            }
+
+            // Appending result map into the list
+            list.add(result);
+        }
+
+        // If searchResult was empty, the method should return an empty map
+        if (!hasData)
+            list = Collections.EMPTY_LIST;
+    }
+
     /**
      * Save current users that is being hold in the data structure.
      */
@@ -115,7 +122,6 @@ public class ActiveDirectoryConnector {
             else
                 System.out.println("File already exists.");
 
-            // create your filewriter and bufferedreader
             Writer out =
                     new BufferedWriter(
                             new OutputStreamWriter(
