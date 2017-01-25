@@ -6,11 +6,13 @@ import javax.naming.directory.*;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * Created by jsh3571 on 27/12/2016.
  */
 public class ActiveDirectoryConnector {
+    // private static Logger logger = Logger.getLogger("ActiveDirectoryConnector.class");
     private Properties env;
     private DirContext ctx;
 
@@ -84,10 +86,15 @@ public class ActiveDirectoryConnector {
             e.printStackTrace();
         }
 
+        // Sorting the result before saving.
+        Collections.sort(list, comp);
+
         // Creating a container properties, data.
         Properties data = new Properties();
 
-        // SORT
+        // Transferring the list to the properties, data.
+        for (int i = 0; i < data.size(); i++)
+            data.putAll(list.get(i));
 
         // Saving resulting data into properties class.
         saveProps(data, "data.properties");
@@ -105,6 +112,18 @@ public class ActiveDirectoryConnector {
             e.printStackTrace();
         }
     }
+
+    private Comparator<Map<String, Object>> comp =
+            new Comparator<Map<String, Object>>() {
+
+        public int compare(Map<String, Object> m1, Map<String, Object> m2) {
+            String key = env.getProperty("key");
+            String firstKey = (String) m1.get(key);
+            String secondKey = (String) m2.get(key);
+
+            return firstKey.compareTo(secondKey);
+        }
+    };
 
     /**
      * Loading a properties in UTF-8 format.
