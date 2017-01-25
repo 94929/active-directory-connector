@@ -117,14 +117,6 @@ public class ActiveDirectoryConnector {
         }
     }
 
-    private void saveEnv() {
-        try {
-            env.store(new FileOutputStream("env.properties"), null);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     private String getDomain() {
         return env.getProperty("domain");
     }
