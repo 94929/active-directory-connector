@@ -12,7 +12,6 @@ import java.util.logging.Logger;
  * Created by jsh3571 on 27/12/2016.
  */
 public class ActiveDirectoryConnector {
-    // private static Logger logger = Logger.getLogger("ActiveDirectoryConnector.class");
     private Properties env;
     private DirContext ctx;
 
@@ -89,16 +88,6 @@ public class ActiveDirectoryConnector {
         // Sorting the result before saving.
         Collections.sort(list, comp);
 
-        // Creating a container properties, data.
-        Properties data = new Properties();
-
-        // Transferring the list to the properties, data.
-        for (int i = 0; i < data.size(); i++)
-            data.putAll(list.get(i));
-
-        // Saving resulting data into properties class.
-        saveProps(data, "data.properties");
-
         return list;
     }
 
@@ -112,18 +101,6 @@ public class ActiveDirectoryConnector {
             e.printStackTrace();
         }
     }
-
-    private Comparator<Map<String, Object>> comp =
-            new Comparator<Map<String, Object>>() {
-
-        public int compare(Map<String, Object> m1, Map<String, Object> m2) {
-            String key = env.getProperty("key");
-            String firstKey = (String) m1.get(key);
-            String secondKey = (String) m2.get(key);
-
-            return firstKey.compareTo(secondKey);
-        }
-    };
 
     /**
      * Loading a properties in UTF-8 format.
@@ -190,4 +167,19 @@ public class ActiveDirectoryConnector {
 
         return ctls;
     }
+
+    /**
+     * Defined own comparator to sort the user list.
+     */
+    private Comparator<Map<String, Object>> comp =
+            new Comparator<Map<String, Object>>() {
+
+        public int compare(Map<String, Object> m1, Map<String, Object> m2) {
+            String key = env.getProperty("key");
+            String firstKey = (String) m1.get(key);
+            String secondKey = (String) m2.get(key);
+
+            return firstKey.compareTo(secondKey);
+        }
+    };
 }
