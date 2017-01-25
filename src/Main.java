@@ -24,8 +24,7 @@ public class Main {
          * If you want to find all users from AD, use "objectclass=user".
          * If you want to find all groups from AD, use "objectclass=group".
          */
-        List<Map<String, Object>> output =
-                adc.getUsers("st=", "서울특별시");
+        List<Map<String, Object>> output = adc.getUsers();
 
         // Printing out the result of ADC
         System.out.println(output);
@@ -33,6 +32,7 @@ public class Main {
         // Closing context, ctx after use
         adc.close();
 
+        /*
         // Obtaining url, usr and pwd from program arguments section
         String url = args[0];
         String usr = args[1];
@@ -53,6 +53,6 @@ public class Main {
         // dbc.deleteRow("loginid", "yjlee_root");
 
         // Closing dbc after use
-        dbc.close();
+        dbc.close();*/
     }
 }

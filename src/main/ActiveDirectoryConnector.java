@@ -4,11 +4,13 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.*;
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.*;
 
 /**
  * Created by jsh3571 on 27/12/2016.
  */
+
 public class ActiveDirectoryConnector {
     private Properties env;
     private DirContext ctx;
@@ -28,12 +30,12 @@ public class ActiveDirectoryConnector {
         try {
             // Create context, ctx from given configuration object, props
             ctx = new InitialDirContext(env);
-
-            setDomain();
-            setAttrIDs();
         } catch (NamingException e) {
             e.printStackTrace();
         }
+
+        setDomain();
+        setAttrIDs();
     }
 
     /**
@@ -53,17 +55,15 @@ public class ActiveDirectoryConnector {
     /**
      * Get all users having input values(attribute) for the filter given
      *
-     * @param filter is the key which we are searching for
-     * @param value  is the value of the attribute for filter
      * @return all users within a domain of the active directory given
      */
-    public List<Map<String, Object>> getUsers(String filter, String value) {
+    public List<Map<String, Object>> getUsers() {
         List<Map<String, Object>> list = new LinkedList<>();
 
         try {
             // Searching data based on 'domain', 'filter' and searcher
             NamingEnumeration searchResults =
-                    ctx.search(domain, filter + value, getControl());
+                    ctx.search(domain, getFilter(), getControl());
 
             // Depending on hasData, map will contain searchResult or not
             boolean hasData = searchResults.hasMore();
@@ -104,20 +104,10 @@ public class ActiveDirectoryConnector {
             e.printStackTrace();
         }
 
-        // Sort users data
-        sortUsers(list);
-
-        // Save users data
-        // saveUsers(list);
+        // SORT
+        // SAVE
 
         return list;
-    }
-
-    /**
-     * sort users by key
-     */
-    private void sortUsers(List<Map<String, Object>> users) {
-
     }
 
     /**
@@ -135,7 +125,13 @@ public class ActiveDirectoryConnector {
 
     private void loadEnv() {
         try {
-            env.load(new FileInputStream("env.properties"));
+            FileInputStream fileInputStream =
+                    new FileInputStream("env.properties");
+            InputStreamReader inputStreamReader =
+                    new InputStreamReader(
+                            fileInputStream, Charset.forName("UTF-8"));
+
+            env.load(inputStreamReader);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -147,6 +143,10 @@ public class ActiveDirectoryConnector {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private String getFilter() {
+        return env.getProperty("filter").replace(',', '=');
     }
 
     private SearchControls getControl() {
