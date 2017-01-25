@@ -10,12 +10,9 @@ import java.util.*;
 /**
  * Created by jsh3571 on 27/12/2016.
  */
-
 public class ActiveDirectoryConnector {
     private Properties env;
     private DirContext ctx;
-    private String domain;
-    private String[] attrIDs;
 
     /**
      * Logging onto active directory server with username and password.
@@ -33,23 +30,6 @@ public class ActiveDirectoryConnector {
         } catch (NamingException e) {
             e.printStackTrace();
         }
-
-        setDomain();
-        setAttrIDs();
-    }
-
-    /**
-     * Setting the domain to be searched.
-     */
-    private void setDomain() {
-        this.domain = env.getProperty("domain");
-    }
-
-    /**
-     * Setting attrIDs.
-     */
-    private void setAttrIDs() {
-        this.attrIDs = env.getProperty("attrIDs").split(",");
     }
 
     /**
@@ -63,7 +43,7 @@ public class ActiveDirectoryConnector {
         try {
             // Searching data based on 'domain', 'filter' and searcher
             NamingEnumeration searchResults =
-                    ctx.search(domain, getFilter(), getControl());
+                    ctx.search(getDomain(), getFilter(), getControl());
 
             // Depending on hasData, map will contain searchResult or not
             boolean hasData = searchResults.hasMore();
@@ -145,12 +125,16 @@ public class ActiveDirectoryConnector {
         }
     }
 
+    private String getDomain() {
+        return env.getProperty("domain");
+    }
+
     private String getFilter() {
         return env.getProperty("filter").replace(',', '=');
     }
 
     private SearchControls getControl() {
-        // Creating new search control that will handle search configuration
+        // Creating a new search control that will handle search configuration.
         SearchControls ctls = new SearchControls();
 
         /* Select attributes to be returned as result, if any of specified attr
@@ -159,7 +143,7 @@ public class ActiveDirectoryConnector {
          *
          * e.g. attrIDs = {"name", "company", "dummy"};
          */
-        ctls.setReturningAttributes(attrIDs);
+        ctls.setReturningAttributes(env.getProperty("attrIDs").split(","));
 
         // Setting search scope, check declaration to see other types of scope
         ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
