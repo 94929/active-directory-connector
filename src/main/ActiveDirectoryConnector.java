@@ -1,11 +1,14 @@
 package main;
 
+import sun.util.logging.PlatformLogger;
+
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.*;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -26,14 +29,18 @@ public class ActiveDirectoryConnector {
         // Create new Properties, props(i.e. env or conf)
         env = new Properties();
 
-        // Init env(i.e. properties) which will contain configuration of ctx
-        loadProps(env, "env.properties");
+        try {
+            // Init env(i.e. properties) which will contain configuration of ctx
+            loadProps(env, "ev.properties");
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.toString(), e);
+        }
 
         try {
             // Create context, ctx from given configuration object, props
             ctx = new InitialDirContext(env);
         } catch (NamingException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.toString(), e);
         }
     }
 
@@ -56,15 +63,17 @@ public class ActiveDirectoryConnector {
             // If the list is actually empty, it should return an empty one.
             if (isEmpty(users))
                 users = Collections.EMPTY_LIST;
+
+            // Sorting the result before saving.
+            sortUsers(users);
+
+            // Saving data
+            saveUsers(users);
         } catch (NamingException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.toString(), e);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.toString(), e);
         }
-
-        // Sorting the result before saving.
-        sortUsers(users);
-
-        // Saving data
-        saveUsers(users);
     }
 
     /**
@@ -74,7 +83,7 @@ public class ActiveDirectoryConnector {
         try {
             ctx.close();
         } catch (NamingException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.toString(), e);
         }
     }
 
@@ -137,38 +146,34 @@ public class ActiveDirectoryConnector {
     /**
      * Save current users that is being hold in the data structure.
      */
-    private void saveUsers(List<Map<String, Object>> users) {
-        try {
-            if (new File("data").createNewFile())
-                System.out.println("Created new file of data.");
-            else
-                System.out.println("File already exists.");
+    private void saveUsers(List<Map<String, Object>> users) throws IOException {
+        if (new File("data").createNewFile())
+            System.out.println("Created new file of data.");
+        else
+            System.out.println("File already exists.");
 
-            Writer out =
-                    new BufferedWriter(
-                            new OutputStreamWriter(
-                                    new FileOutputStream("data"),
-                                    Charset.forName("UTF-8")));
+        Writer out =
+                new BufferedWriter(
+                        new OutputStreamWriter(
+                                new FileOutputStream("data"),
+                                Charset.forName("UTF-8")));
 
-            for (int i = 0; i < users.size(); i++) {
-                Iterator<Map.Entry<String, Object>> it
-                        = users.get(i).entrySet().iterator();
+        for (int i = 0; i < users.size(); i++) {
+            Iterator<Map.Entry<String, Object>> it
+                    = users.get(i).entrySet().iterator();
 
-                while (it.hasNext()) {
-                    Map.Entry<String, Object> entry = it.next();
-                    out.write(entry.getKey() + "=" + entry.getValue());
+            while (it.hasNext()) {
+                Map.Entry<String, Object> entry = it.next();
+                out.write(entry.getKey() + "=" + entry.getValue());
 
-                    if (it.hasNext())
-                        out.write(",");
-                }
-
-                out.write("\n");
+                if (it.hasNext())
+                    out.write(",");
             }
 
-            out.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+            out.write("\n");
         }
+
+        out.close();
     }
 
     /**
@@ -177,18 +182,15 @@ public class ActiveDirectoryConnector {
      * @param props
      * @param propsName
      */
-    private void loadProps(Properties props, String propsName) {
-        try {
-            FileInputStream fileInputStream =
-                    new FileInputStream(propsName);
-            InputStreamReader inputStreamReader =
-                    new InputStreamReader(
-                            fileInputStream, Charset.forName("UTF-8"));
+    private void loadProps(Properties props, String propsName)
+            throws IOException {
+        FileInputStream fileInputStream =
+                new FileInputStream(propsName);
+        InputStreamReader inputStreamReader =
+                new InputStreamReader(
+                        fileInputStream, Charset.forName("UTF-8"));
 
-            props.load(inputStreamReader);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        props.load(inputStreamReader);
     }
 
     /**
@@ -197,18 +199,15 @@ public class ActiveDirectoryConnector {
      * @param props
      * @param propsName
      */
-    private void saveProps(Properties props, String propsName) {
-        try {
-            FileOutputStream fileOutputStream =
-                    new FileOutputStream(propsName);
-            OutputStreamWriter outputStreamWriter =
-                    new OutputStreamWriter(
-                            fileOutputStream, Charset.forName("UTF-8"));
+    private void saveProps(Properties props, String propsName)
+            throws IOException {
+        FileOutputStream fileOutputStream =
+                new FileOutputStream(propsName);
+        OutputStreamWriter outputStreamWriter =
+                new OutputStreamWriter(
+                        fileOutputStream, Charset.forName("UTF-8"));
 
-            props.store(outputStreamWriter, null);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        props.store(outputStreamWriter, null);
     }
 
     private String getDomain() {
