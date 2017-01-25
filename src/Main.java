@@ -17,30 +17,7 @@ public class Main {
          */
         adc.getUsers();
 
-        // Closing context, ctx after use
+        // Closing context, adc after using it.
         adc.close();
-
-        /*
-        // Obtaining url, usr and pwd from program arguments section
-        String url = args[0];
-        String usr = args[1];
-        String pwd = args[2];
-
-        main.DatabaseConnector dbc = new main.DatabaseConnector(url, usr, pwd);
-
-        // Setting the table name which we will insert the data into
-        dbc.setTable("client_list");
-
-        // Setting the column names which we will insert the data into
-        dbc.setColumns(Arrays.asList("loginpw", "name", "loginid"));
-
-        // Insert row(s) into the columns of the table given
-        // dbc.insertRows(output);
-
-        // delete row(s) from table
-        // dbc.deleteRow("loginid", "fake_id");
-
-        // Closing dbc after use
-        dbc.close();*/
     }
 }
