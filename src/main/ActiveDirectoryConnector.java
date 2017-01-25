@@ -7,13 +7,14 @@ import javax.naming.directory.*;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 /**
  * Created by jsh3571 on 27/12/2016.
  */
 public class ActiveDirectoryConnector {
-    private Properties props;
+    private Properties env;
     private DirContext ctx;
     private String domain;
     private String[] attrIDs;
@@ -28,15 +29,18 @@ public class ActiveDirectoryConnector {
      */
     public ActiveDirectoryConnector(String host, String port,
                                     String username, String password) {
-        // Init new Properties, props(i.e. env or conf)
-        props = new Properties();
+        // Create new Properties, props(i.e. env or conf)
+        env = new Properties();
 
         // Init env(i.e. properties) which will contain configuration of ctx
         initEnv(host, port, username, password);
 
+        // Save connection configuration, env.
+        saveEnv();
+
         try {
             // Create context, ctx from given configuration object, props
-            ctx = new InitialDirContext(props);
+            ctx = new InitialDirContext(env);
         } catch (NamingException e) {
             e.printStackTrace();
         }
@@ -170,14 +174,22 @@ public class ActiveDirectoryConnector {
                          String username, String password) {
 
         // Connect to active directory using LDAP.
-        props.put(Context.INITIAL_CONTEXT_FACTORY,
+        env.put(Context.INITIAL_CONTEXT_FACTORY,
                 "com.sun.jndi.ldap.LdapCtxFactory");
-        props.put(Context.PROVIDER_URL, "ldap://" + host + ":" + port);
+        env.put(Context.PROVIDER_URL, "ldap://" + host + ":" + port);
 
         // Authenticate as standard user using given username and password
-        props.put(Context.SECURITY_AUTHENTICATION, "simple");
-        props.put(Context.SECURITY_PRINCIPAL, username);
-        props.put(Context.SECURITY_CREDENTIALS, password);
+        env.put(Context.SECURITY_AUTHENTICATION, "simple");
+        env.put(Context.SECURITY_PRINCIPAL, username);
+        env.put(Context.SECURITY_CREDENTIALS, password);
+    }
+
+    private void saveEnv() {
+        try {
+            env.store(new FileWriter("env.properties"), null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private SearchControls getControl() {
