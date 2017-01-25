@@ -22,7 +22,7 @@ public class ActiveDirectoryConnector {
         env = new Properties();
 
         // Init env(i.e. properties) which will contain configuration of ctx
-        loadEnv();
+        loadProps(env, "env.properties");
 
         try {
             // Create context, ctx from given configuration object, props
@@ -84,16 +84,19 @@ public class ActiveDirectoryConnector {
             e.printStackTrace();
         }
 
+        // Creating a container properties, data.
+        Properties data = new Properties();
+
         // SORT
-        // SAVE
+
+        // Saving resulting data into properties class.
+        saveProps(data, "data.properties");
 
         return list;
     }
 
     /**
      * Logging out from Active Directory by closing DirContext, ctx.
-     *
-     * @return
      */
     public void close() {
         try {
@@ -103,15 +106,41 @@ public class ActiveDirectoryConnector {
         }
     }
 
-    private void loadEnv() {
+    /**
+     * Loading a properties in UTF-8 format.
+     *
+     * @param props
+     * @param propsName
+     */
+    private void loadProps(Properties props, String propsName) {
         try {
             FileInputStream fileInputStream =
-                    new FileInputStream("env.properties");
+                    new FileInputStream(propsName);
             InputStreamReader inputStreamReader =
                     new InputStreamReader(
                             fileInputStream, Charset.forName("UTF-8"));
 
-            env.load(inputStreamReader);
+            props.load(inputStreamReader);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Saving a properties in UTF-8 format.
+     *
+     * @param props
+     * @param propsName
+     */
+    private void saveProps(Properties props, String propsName) {
+        try {
+            FileOutputStream fileOutputStream =
+                    new FileOutputStream(propsName);
+            OutputStreamWriter outputStreamWriter =
+                    new OutputStreamWriter(
+                            fileOutputStream, Charset.forName("UTF-8"));
+
+            props.store(outputStreamWriter, null);
         } catch (IOException e) {
             e.printStackTrace();
         }
