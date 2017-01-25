@@ -12,8 +12,8 @@ public class Main {
 
         /* Use getUser method according to its 'absolute key' value.
          *
-         * If you want to find all users from AD, use "objectclass=user".
-         * If you want to find all groups from AD, use "objectclass=group".
+         * If you want to find every users from AD, use "objectclass=user".
+         * If you want to find every groups from AD, use "objectclass=group".
          */
         adc.getUsers();
 

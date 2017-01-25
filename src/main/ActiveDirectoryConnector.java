@@ -24,12 +24,15 @@ public class ActiveDirectoryConnector {
      * Logging onto active directory server with username and password.
      */
     public ActiveDirectoryConnector() {
-        // Create new Properties, props(i.e. env or conf)
+        // Create new Properties, props(i.e. env)
         env = new Properties();
 
         try {
+            // Obtaining the basePath of the current project
+            String basePath = new File("").getAbsolutePath();
+
             // Init env(i.e. properties) which will contain configuration of ctx
-            loadProps(env, "env.properties");
+            loadProps(env, basePath.concat("/src/config/env.properties"));
 
             // Create context, ctx from given configuration object, props
             ctx = new InitialDirContext(env);
@@ -142,7 +145,7 @@ public class ActiveDirectoryConnector {
      * Save current users that is being hold in the data structure.
      */
     private void saveUsers(List<Map<String, Object>> users) throws IOException {
-        String fileName = env.getProperty("filename");
+        String fileName = env.getProperty("fileName");
 
         Writer out =
                 new BufferedWriter(
